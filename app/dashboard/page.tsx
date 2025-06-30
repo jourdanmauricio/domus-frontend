@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useLogout } from "@/hooks/useAuth";
 import { useApiQuery } from "@/hooks/useApi";
-import { API_ENDPOINTS } from "@/constants/endpoints";
-import { QUERY_KEYS } from "@/constants/queryKeys";
+import { API_ENDPOINTS, QUERY_KEYS } from "@/lib/constants";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
