@@ -19,12 +19,13 @@ import { Form } from "@/components/ui/form";
 import { InputField } from "@/components/form-generics";
 import { forgotPasswordSchema } from "@/lib/schemas/auth";
 import { useForgotPassword } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPasswordPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
   const forgotPasswordMutation = useForgotPassword();
 
   const form = useForm<ForgotPasswordFormData>({
@@ -35,16 +36,14 @@ export function ForgotPasswordPage() {
   });
 
   const handleSubmit = async (data: ForgotPasswordFormData) => {
-    setError(null);
-
     try {
       await forgotPasswordMutation.mutateAsync({ email: data.email });
       setIsSubmitted(true);
     } catch (error) {
-      console.error("Error enviando email:", error);
-      setError(
-        error instanceof Error ? error.message : "Error al enviar el email"
-      );
+      toast({
+        title: "Error al enviar el email",
+        variant: "destructive",
+      });
     }
   };
 
@@ -137,12 +136,6 @@ export function ForgotPasswordPage() {
           </CardHeader>
 
           <CardContent className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                {error}
-              </div>
-            )}
-
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleSubmit)}
