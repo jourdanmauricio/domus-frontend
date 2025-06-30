@@ -25,8 +25,6 @@ export const useLogin = () => {
         redirect: false,
       });
 
-      console.log("🔍 SignIn result:", result);
-
       if (result?.error) {
         throw new Error(`Error de autenticación: ${result.error}`);
       }

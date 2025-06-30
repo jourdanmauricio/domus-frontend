@@ -15,13 +15,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLogin } from "@/hooks/useAuth";
 import { loginSchema } from "@/lib/schemas/auth";
 import { InputField } from "@/components/form-generics/input-field";
 import { Form } from "@/components/ui/form";
 import CheckboxField from "@/components/form-generics/checkbox-field";
+import { toast } from "@/hooks/use-toast";
 
 type LoginFormData = {
   email: string;
@@ -30,7 +30,6 @@ type LoginFormData = {
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
   const loginMutation = useLogin();
 
@@ -45,10 +44,16 @@ export function LoginPage() {
   const handleSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data);
+      toast({
+        title: "Bienvenido",
+        variant: "default",
+      });
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error logging in:", error);
-      setError("Credenciales inválidas");
+      toast({
+        title: "Credenciales inválidas",
+        variant: "destructive",
+      });
     }
   };
 
@@ -126,12 +131,6 @@ export function LoginPage() {
                     ¿Olvidaste tu contraseña?
                   </Link>
                 </div>
-
-                {error && (
-                  <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
-                    {error}
-                  </div>
-                )}
 
                 <Button
                   type="submit"

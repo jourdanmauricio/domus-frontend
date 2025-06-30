@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Home, Eye, EyeOff, Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Home, Eye, EyeOff, User, Mail, Phone, Lock } from "lucide-react";
 
 import {
   Card,
@@ -15,13 +15,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useRegister } from "@/hooks/useAuth";
 import { RegisterFormData, registerSchema } from "@/lib/schemas/auth";
 import { Form } from "@/components/ui/form";
 import { InputField } from "@/components/form-generics";
+import { toast } from "@/hooks/use-toast";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +31,6 @@ export default function RegisterPage() {
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -41,10 +39,22 @@ export default function RegisterPage() {
 
   const handleSubmit = async (data: RegisterFormData) => {
     try {
-      await registerMutation.mutateAsync(data);
+      const dataToSend = {
+        email: data.email,
+        password: data.password,
+      };
+      await registerMutation.mutateAsync(dataToSend);
+      toast({
+        title: "Cuenta creada exitosamente",
+        description: "Bienvenido a Domus App",
+      });
       router.push("/dashboard");
     } catch (error) {
-      console.error("Error logging in:", error);
+      toast({
+        title: "Error al crear cuenta",
+        description: "Por favor, intenta nuevamente",
+        variant: "destructive",
+      });
     }
   };
 
@@ -72,7 +82,9 @@ export default function RegisterPage() {
           <CardContent className="space-y-6">
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(handleSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit, (errors) => {
+                  console.log("🔍 Form errors:", errors);
+                })}
                 className="space-y-4"
               >
                 <InputField
@@ -141,8 +153,20 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                <Button className="w-full h-11 bg-secondary hover:bg-secondary/90 text-white font-medium">
-                  Crear Cuenta
+                <Button
+                  type="submit"
+                  disabled={registerMutation.isPending}
+                  onClick={() => console.log("🔘 Botón clickeado")}
+                  className="w-full h-11 bg-secondary hover:bg-secondary/90 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {registerMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creando cuenta...
+                    </>
+                  ) : (
+                    "Crear Cuenta"
+                  )}
                 </Button>
               </form>
             </Form>

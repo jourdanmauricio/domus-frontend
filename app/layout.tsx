@@ -5,6 +5,7 @@ import "./globals.css";
 import { auth } from "./api/auth/[...nextauth]/route";
 import SessionProvider from "@/providers/SessionProvider";
 import QueryProvider from "@/providers/QueryProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +25,10 @@ export default async function RootLayout({
     <html lang="es">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            {children}
+            <Toaster />
+          </QueryProvider>
         </SessionProvider>
       </body>
     </html>

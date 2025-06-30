@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Home, Menu } from "lucide-react"
-import Link from "next/link"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button";
+import { Home, Menu } from "lucide-react";
+import Link from "next/link";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Navbar() {
   return (
@@ -11,20 +11,32 @@ export function Navbar() {
       <div className="container flex h-16 items-center">
         <Link href="/" className="flex items-center space-x-2">
           <Home className="h-6 w-6 text-primary" />
-          <span className="font-bold text-xl text-primary">InmoPortal</span>
+          <span className="font-bold text-xl text-primary">Domus App</span>
         </Link>
 
         <nav className="hidden md:flex items-center space-x-6 ml-8">
-          <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
+          <Link
+            href="/"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             Inicio
           </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary transition-colors">
+          <Link
+            href="#"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             Propiedades
           </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary transition-colors">
+          <Link
+            href="#"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             Servicios
           </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary transition-colors">
+          <Link
+            href="#"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
             Contacto
           </Link>
         </nav>
@@ -45,7 +57,11 @@ export function Navbar() {
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="md:hidden bg-transparent">
+              <Button
+                variant="outline"
+                size="icon"
+                className="md:hidden bg-transparent"
+              >
                 <Menu className="h-4 w-4" />
               </Button>
             </SheetTrigger>
@@ -70,7 +86,9 @@ export function Navbar() {
                     </Button>
                   </Link>
                   <Link href="/register">
-                    <Button className="w-full bg-primary hover:bg-primary/90">Registrarse</Button>
+                    <Button className="w-full bg-primary hover:bg-primary/90">
+                      Registrarse
+                    </Button>
                   </Link>
                 </div>
               </div>
@@ -79,5 +97,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
