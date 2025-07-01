@@ -16,6 +16,11 @@ interface ForgotPasswordData {
   email: string;
 }
 
+interface RecoveryPasswordData {
+  password: string;
+  token: string;
+}
+
 export const useLogin = () => {
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
@@ -83,6 +88,26 @@ export const useForgotPassword = () => {
         throw new Error(
           errorData.error || "Error al enviar email de recuperación"
         );
+      }
+
+      return response.json();
+    },
+  });
+};
+
+export const useRecoveryPassword = () => {
+  return useMutation({
+    mutationFn: async (data: RecoveryPasswordData) => {
+      const response = await fetch(`/api/auth/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al restaurando el password");
       }
 
       return response.json();

@@ -39,3 +39,13 @@ export const registerSchema = z
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+
+export const recoveryPasswordFormSchema = z
+  .object({
+    password: z.string().min(6, { message: "Mínimo 6 caracteres" }),
+    confirmPassword: z.string().min(6, { message: "Mínimo 6 caracteres" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });

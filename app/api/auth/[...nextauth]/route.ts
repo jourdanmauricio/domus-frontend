@@ -12,20 +12,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          console.log("❌ Missing credentials");
           return null;
         }
 
         try {
+          const loginPayload = {
+            email: credentials.email,
+            password: credentials.password,
+          };
+
           const res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
+            body: JSON.stringify(loginPayload),
           });
 
           const responseData = await res.json();
@@ -44,7 +45,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           return null;
         } catch (error) {
-          console.error("❌ Auth error:", error);
           return null;
         }
       },
@@ -79,6 +79,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
     strategy: "jwt",
   },
+  debug: process.env.NODE_ENV === "development",
 });
 
 export const { GET, POST } = handlers;
