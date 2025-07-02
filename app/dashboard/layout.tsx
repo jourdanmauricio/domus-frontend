@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLogout } from "@/hooks/useAuth";
 import { DashboardSidebar, DashboardHeader } from "@/components/dashboard";
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -49,20 +47,20 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <DashboardHeader
         user={session.user}
         onLogout={handleLogout}
         isLoading={logoutMutation.isPending}
         onMenuClick={() => setSidebarOpen(!sidebarOpen)}
       />
-      <div className="flex">
+      <div className="flex flex-1">
         <DashboardSidebar
           userRoles={session.user.roles}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
-        <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full overflow-auto">
           {children}
         </main>
       </div>

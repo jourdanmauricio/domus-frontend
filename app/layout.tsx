@@ -6,6 +6,7 @@ import { auth } from "./api/auth/[...nextauth]/route";
 import SessionProvider from "@/providers/SessionProvider";
 import QueryProvider from "@/providers/QueryProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +27,10 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SessionProvider session={session}>
           <QueryProvider>
-            {children}
-            <Toaster />
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
           </QueryProvider>
         </SessionProvider>
       </body>
