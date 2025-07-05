@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { adminMenuItems, tenantGuarantorMenuItems } from "@/lib/constants/menu";
+import { menuItems } from "@/lib/constants/menu";
 
 interface DashboardSidebarProps {
   userRoles: string[];
@@ -22,8 +22,8 @@ export function DashboardSidebar({
   const pathname = usePathname();
 
   // Determinar qué menú mostrar basado en los roles
-  const isAdmin = userRoles?.includes("admin");
-  const menuItems = isAdmin ? adminMenuItems : tenantGuarantorMenuItems;
+  const menu = menuItems[userRoles[0]]
+
 
   return (
     <>
@@ -46,7 +46,7 @@ export function DashboardSidebar({
       >
         <ScrollArea className="flex-1 px-3 py-4">
           <div className="space-y-2">
-            {menuItems.map((item) => {
+            {menu.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
 

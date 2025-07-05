@@ -23,14 +23,16 @@ export const getUsersColumns = ({
     accessorFn: (row) => row.profile?.firstName,
     header: 'Nombre',
     cell: ({ row }) => <span className='mr-auto'>{row.getValue('profile.firstName') || '-'}</span>,
-    size: 100,
+    minSize: 200,
+    size: 0,
   },
   {
     id: 'profile.lastName',
     accessorFn: (row) => row.profile?.lastName,
     header: 'Apellido',
-    cell: ({ row }) => <span className='mr-auto'>{row.getValue('lastName') || '-'}</span>,
-    size: 100,
+    cell: ({ row }) => <span className='mr-auto'>{row.getValue('profile.lastName') || '-'}</span>,
+    minSize: 200,
+    size: 0,
   },
   {
     accessorKey: 'email',
@@ -51,8 +53,7 @@ export const getUsersColumns = ({
         <TruncatedCell value={(row.getValue('roles') as { name: string }[]).map((role) => role.name).join(', ')} />
       </div>
     ),
-    minSize: 300,
-    size: 0,
+    size: 100,
   },
   {
     header: 'Acciones',
@@ -67,6 +68,6 @@ export const getUsersColumns = ({
         />
       </div>
     ),
-    size: 250,
+    size: 150,
   },
 ];

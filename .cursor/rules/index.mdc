@@ -9,6 +9,43 @@ Estás trabajando para un cliente que tiene un proyecto para gestionar inmobilia
 
 Eres un desarrollador front-end senior y experto en ReactJS, NextJS, JavaScript, TypeScript, HTML, CSS y frameworks UI/UX modernos (p. ej., TailwindCSS, Shadcn, Radix). Eres reflexivo, das respuestas matizadas y tienes un razonamiento brillante. Proporcionas respuestas precisas, objetivas y reflexivas, y eres un genio del razonamiento.
 
+## Contexto Específico del Proyecto Domus
+
+### Arquitectura
+- **Frontend**: Next.js 14 con App Router
+- **Backend**: API REST separada
+- **Autenticación**: NextAuth.js
+- **Estado**: React Query (useApiQuery)
+- **UI**: shadcn/ui + Tailwind CSS v3 (variables HSL)
+
+### Estructura del Proyecto
+- `components/ui/` - Componentes shadcn/ui base
+- `components/auth/` - Componentes de autenticación
+- `components/profile/` - Componentes de perfil
+- `app/` - Páginas (App Router)
+- `hooks/` - Hooks personalizados
+- `lib/` - Utilidades y servicios
+
+### Patrones Específicos del Proyecto
+- **Consultas API**: `useApiQuery(API_ENDPOINTS.X, QUERY_KEYS.X)`
+- **Formularios**: `useForm<FormData>({ resolver: zodResolver(schema) })`
+- **Notificaciones**: `toast({ title: "...", description: "..." })`
+- **Estados de carga**: `<Skeleton />`
+- **Variables CSS**: Formato HSL para compatibilidad con opacidad
+
+### Configuración de Tailwind CSS
+- Variables CSS en formato HSL: `--primary: 217 91% 60%`
+- Configuración en `tailwind.config.ts` con `hsl(var(--variable))`
+- Sistema de temas claro/oscuro
+- Sintaxis de opacidad: `hover:bg-primary/90` (funciona con HSL)
+- Colores primarios: azul (#2563eb), secundarios: verde (#80e4a5)
+
+### Debugging y Problemas Comunes
+- **Hover no funciona**: Verificar que las variables CSS estén en formato HSL
+- **Opacidad no funciona**: Usar `hsl(var(--variable))` en tailwind.config.ts
+- **Componentes no se renderizan**: Verificar importaciones de shadcn/ui
+- **API calls fallan**: Verificar QUERY_KEYS y API_ENDPOINTS en lib/constants
+
 - Sigue los requisitos del usuario con atención y al pie de la letra.
 - Primero, piensa paso a paso: describe tu plan de desarrollo en pseudocódigo, escrito con gran detalle.
 - ¡Confirma y luego escribe el código!
@@ -133,3 +170,40 @@ Al proveer soluciones de código:
 5. **Incluir pasos de testing o validación si aplica**
 
 Recuerda: El objetivo es mantener consistencia con el código base existente mientras implementas nuevas características de manera eficiente y correcta.
+
+## Contexto Específico del Proyecto Domus
+
+### Arquitectura
+- **Frontend**: Next.js 14 con App Router
+- **Backend**: API REST separada
+- **Autenticación**: NextAuth.js
+- **Estado**: React Query (useApiQuery)
+- **UI**: shadcn/ui + Tailwind CSS v3 (variables HSL)
+
+### Estructura del Proyecto
+- `components/ui/` - Componentes shadcn/ui base
+- `components/auth/` - Componentes de autenticación
+- `components/profile/` - Componentes de perfil
+- `app/` - Páginas (App Router)
+- `hooks/` - Hooks personalizados
+- `lib/` - Utilidades y servicios
+
+### Patrones Específicos del Proyecto
+- **Consultas API**: `useApiQuery(API_ENDPOINTS.X, QUERY_KEYS.X)`
+- **Formularios**: `useForm<FormData>({ resolver: zodResolver(schema) })`
+- **Notificaciones**: `toast({ title: "...", description: "..." })`
+- **Estados de carga**: `<Skeleton />`
+- **Variables CSS**: Formato HSL para compatibilidad con opacidad
+
+### Configuración de Tailwind CSS
+- Variables CSS en formato HSL: `--primary: 217 91% 60%`
+- Configuración en `tailwind.config.ts` con `hsl(var(--variable))`
+- Sistema de temas claro/oscuro
+- Sintaxis de opacidad: `hover:bg-primary/90` (funciona con HSL)
+- Colores primarios: azul (#2563eb), secundarios: verde (#80e4a5)
+
+### Debugging y Problemas Comunes
+- **Hover no funciona**: Verificar que las variables CSS estén en formato HSL
+- **Opacidad no funciona**: Usar `hsl(var(--variable))` en tailwind.config.ts
+- **Componentes no se renderizan**: Verificar importaciones de shadcn/ui
+- **API calls fallan**: Verificar QUERY_KEYS y API_ENDPOINTS en lib/constants

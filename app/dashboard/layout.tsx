@@ -47,20 +47,20 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       <DashboardHeader
         user={session.user}
         onLogout={handleLogout}
         isLoading={logoutMutation.isPending}
         onMenuClick={() => setSidebarOpen(!sidebarOpen)}
       />
-      <div className="flex flex-1">
+      <div className="flex flex-1 min-h-0">
         <DashboardSidebar
           userRoles={session.user.roles}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
-        <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full overflow-auto">
+        <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full overflow-y-auto">
           {children}
         </main>
       </div>

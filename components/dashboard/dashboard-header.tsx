@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -30,6 +31,8 @@ export function DashboardHeader({
   isLoading,
   onMenuClick,
 }: DashboardHeaderProps) {
+  const router = useRouter();
+  
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -37,6 +40,10 @@ export function DashboardHeader({
       .join("")
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  const handleProfileClick = () => {
+    router.push("/dashboard/profile");
   };
 
   return (
@@ -52,7 +59,7 @@ export function DashboardHeader({
             >
               <Menu className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            <h1 className="text-xl md:text-2xl font-bold text-primary">
               Domus Dashboard
             </h1>
           </div>
@@ -87,9 +94,9 @@ export function DashboardHeader({
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem disabled>
+                <DropdownMenuItem onClick={handleProfileClick}>
                   <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Perfil</span>
+                  <span>Mi Perfil</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

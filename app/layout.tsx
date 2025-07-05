@@ -24,7 +24,7 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
-      <body className={inter.className}>
+      <body className={inter.className}  suppressHydrationWarning>
         <SessionProvider session={session}>
           <QueryProvider>
             <TooltipProvider>
