@@ -127,6 +127,7 @@ import { prisma } from '@/lib/prisma';
 
 ### Manejo de Formularios
 - Usar react-hook-form con validación Zod
+- Los schemas se ubican en lib/schemas agrupados por entidad
 - Seguir este patrón:
   ```typescript
   const form = useForm<FormData>({

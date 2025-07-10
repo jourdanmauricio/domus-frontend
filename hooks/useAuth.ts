@@ -1,6 +1,6 @@
 // hooks/useAuth.ts
-import { useMutation } from "@tanstack/react-query";
-import { signIn, signOut } from "next-auth/react";
+import { useMutation } from '@tanstack/react-query';
+import { signIn, signOut } from 'next-auth/react';
 
 interface LoginCredentials {
   email: string;
@@ -24,7 +24,7 @@ interface RecoveryPasswordData {
 export const useLogin = () => {
   return useMutation({
     mutationFn: async (credentials: LoginCredentials) => {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         email: credentials.email,
         password: credentials.password,
         redirect: false,
@@ -35,7 +35,7 @@ export const useLogin = () => {
       }
 
       if (!result?.ok) {
-        throw new Error("Error de autenticación");
+        throw new Error('Error de autenticación');
       }
 
       return result;
@@ -46,17 +46,17 @@ export const useLogin = () => {
 export const useRegister = () => {
   return useMutation({
     mutationFn: async (data: RegisterData) => {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Error al registrar usuario");
+        throw new Error(errorData.error || 'Error al registrar usuario');
       }
 
       return response.json();
@@ -76,18 +76,16 @@ export const useForgotPassword = () => {
   return useMutation({
     mutationFn: async (data: ForgotPasswordData) => {
       const response = await fetch(`/api/auth/forgot-password`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          errorData.error || "Error al enviar email de recuperación"
-        );
+        throw new Error(errorData.error || 'Error al enviar email de recuperación');
       }
 
       return response.json();
@@ -99,15 +97,15 @@ export const useRecoveryPassword = () => {
   return useMutation({
     mutationFn: async (data: RecoveryPasswordData) => {
       const response = await fetch(`/api/auth/reset-password`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Error al restaurando el password");
+        throw new Error(errorData.error || 'Error al restaurando el password');
       }
 
       return response.json();

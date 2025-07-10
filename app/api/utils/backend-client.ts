@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "../auth/[...nextauth]/route";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '../auth/[...nextauth]/route';
+import axios from 'axios';
 
 const API_BASE_URL = process.env.BACKEND_URL;
 
-interface BackendResponse<T = any> {
+export interface BackendResponse<T = any> {
   data?: T;
   error?: string;
   status: number;
@@ -14,12 +15,12 @@ export class BackendClient {
     const session = await auth();
 
     if (!session?.accessToken) {
-      throw new Error("No autorizado");
+      throw new Error('No autorizado');
     }
 
     return {
       Authorization: `Bearer ${session.accessToken}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     };
   }
 
@@ -38,25 +39,20 @@ export class BackendClient {
       const data = await response.json();
       return { data, status: response.status };
     } catch (error) {
-      console.error(`Error en API ${endpoint}:`, error);
-
-      if (error instanceof Error && error.message === "No autorizado") {
-        return { error: "No autorizado", status: 401 };
+      if (error instanceof Error && error.message === 'No autorizado') {
+        return { error: 'No autorizado', status: 401 };
       }
 
-      return { error: "Error interno del servidor", status: 500 };
+      return { error: 'Error interno del servidor', status: 500 };
     }
   }
 
-  static async post<T = any>(
-    endpoint: string,
-    body: any
-  ): Promise<BackendResponse<T>> {
+  static async post<T = any>(endpoint: string, body: any): Promise<BackendResponse<T>> {
     try {
       const headers = await this.getAuthHeaders();
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: "POST",
+        method: 'POST',
         headers,
         body: JSON.stringify(body),
       });
@@ -70,41 +66,34 @@ export class BackendClient {
     } catch (error) {
       console.error(`Error en API ${endpoint}:`, error);
 
-      if (error instanceof Error && error.message === "No autorizado") {
-        return { error: "No autorizado", status: 401 };
+      if (error instanceof Error && error.message === 'No autorizado') {
+        return { error: 'No autorizado', status: 401 };
       }
 
-      return { error: "Error interno del servidor", status: 500 };
+      return { error: 'Error interno del servidor', status: 500 };
     }
   }
 
-  static async put<T = any>(
-    endpoint: string,
-    body: any
-  ): Promise<BackendResponse<T>> {
+  static async put<T = any>(endpoint: string, body: any): Promise<BackendResponse<T>> {
     try {
       const headers = await this.getAuthHeaders();
 
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: "PUT",
+      const response = await axios.put(`${API_BASE_URL}${endpoint}`, body, {
         headers,
-        body: JSON.stringify(body),
       });
 
-      if (!response.ok) {
-        throw new Error(`Error del servidor: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return { data, status: response.status };
+      return { data: response.data, status: response.status };
     } catch (error) {
-      console.error(`Error en API ${endpoint}:`, error);
-
-      if (error instanceof Error && error.message === "No autorizado") {
-        return { error: "No autorizado", status: 401 };
+      if (axios.isAxiosError(error)) {
+        const newError = {
+          error: error.response?.data?.message || 'Error del servidor',
+          status: error.response?.status || 500,
+        };
+        console.error(`Error en API ${endpoint}:`, newError);
+        return newError;
       }
 
-      return { error: "Error interno del servidor", status: 500 };
+      return { error: 'Error interno del servidor', status: 500 };
     }
   }
 
@@ -113,7 +102,7 @@ export class BackendClient {
       const headers = await this.getAuthHeaders();
 
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers,
       });
 
@@ -126,11 +115,11 @@ export class BackendClient {
     } catch (error) {
       console.error(`Error en API ${endpoint}:`, error);
 
-      if (error instanceof Error && error.message === "No autorizado") {
-        return { error: "No autorizado", status: 401 };
+      if (error instanceof Error && error.message === 'No autorizado') {
+        return { error: 'No autorizado', status: 401 };
       }
 
-      return { error: "Error interno del servidor", status: 500 };
+      return { error: 'Error interno del servidor', status: 500 };
     }
   }
 }
@@ -139,7 +128,10 @@ export class BackendClient {
 export const createApiResponse = (backendResponse: BackendResponse) => {
   if (backendResponse.error) {
     return NextResponse.json(
-      { error: backendResponse.error },
+      {
+        error: backendResponse.status,
+        message: backendResponse.error,
+      },
       { status: backendResponse.status }
     );
   }

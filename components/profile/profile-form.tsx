@@ -1,351 +1,112 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useSession } from "next-auth/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Separator } from "@/components/ui/separator";
-import { Mail, Phone, MapPin, Calendar, User, Shield } from "lucide-react";
-import { UserBackendDto } from "@/lib/types/users";
-import { toast } from "@/hooks/use-toast";
+import { z } from 'zod';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-const profileSchema = z.object({
-  firstName: z.string().min(1, "El nombre es requerido"),
-  lastName: z.string().min(1, "El apellido es requerido"),
-  dni: z.string().min(1, "El DNI es requerido"),
-  phone: z.string().min(1, "El teléfono es requerido"),
-  birthDate: z.string().optional(),
-  gender: z.string().optional(),
-  nationality: z.string().optional(),
-  language: z.string().optional(),
-  bio: z.string().optional(),
-  address: z.object({
-    street: z.string().min(1, "La calle es requerida"),
-    number: z.string().min(1, "El número es requerido"),
-    apartment: z.string().optional(),
-    neighborhood: z.string().optional(),
-  }),
-});
+import { QUERY_KEYS } from '@/lib/constants';
+import { mapAxiosError } from '@/lib/utils/error-mapper';
+import { FormProvider } from '@/lib/contexts/form-context';
+import { Button, Form } from '@/components/ui';
+import { toast } from '@/hooks/use-toast';
+import { profileSchema } from '@/lib/schemas/users';
+import { usersService } from '@/lib/services/users.service';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { BackendResponse } from '@/app/api/utils/backend-client';
+import { UserBackendDto, UserSendProfileDto } from '@/lib/types/users';
+import {
+  userProfileDefaultValues,
+  userProfileMapperBack,
+  userProfileMapperFront,
+} from '@/lib/mappers/userProfile';
+import { ProfileTabs } from '@/components/profile/profile-tabs/profile-tabs';
 
-type ProfileFormData = z.infer<typeof profileSchema>;
+export type ProfileFormDataDto = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
   userProfile?: UserBackendDto;
   onSave: () => void;
   onCancel: () => void;
+  disabled?: boolean;
 }
 
-export function ProfileForm({ userProfile, onSave, onCancel }: ProfileFormProps) {
-  const { data: session } = useSession();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function ProfileForm({ userProfile, onSave, onCancel, disabled = false }: ProfileFormProps) {
+  const queryClient = useQueryClient();
 
-  const form = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      firstName: userProfile?.profile?.firstName || "",
-      lastName: userProfile?.profile?.lastName || "",
-      dni: userProfile?.profile?.dni || "",
-      phone: userProfile?.profile?.phone || "",
-      birthDate: userProfile?.profile?.birthDate ? userProfile.profile.birthDate.split('T')[0] : "",
-      gender: userProfile?.profile?.gender || "",
-      nationality: userProfile?.profile?.nationality || "",
-      language: userProfile?.profile?.language || "",
-      bio: userProfile?.profile?.bio || "",
-      address: {
-        street: userProfile?.profile?.address?.street || "",
-        number: userProfile?.profile?.address?.number || "",
-        apartment: userProfile?.profile?.address?.apartment || "",
-        neighborhood: userProfile?.profile?.address?.neighborhood || "",
-      },
+  const updateMutation = useMutation({
+    mutationFn: (data: UserSendProfileDto) => usersService.updateProfile(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS.ME] });
+      toast({
+        title: 'Perfil actualizado correctamente',
+        variant: 'success',
+      });
+      onSave();
+    },
+    onError: (error: BackendResponse) => {
+      const { message } = mapAxiosError(error);
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'error',
+      });
     },
   });
 
-  const handleSubmit = async (data: ProfileFormData) => {
-    setIsSubmitting(true);
+  const form = useForm<ProfileFormDataDto>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: userProfileDefaultValues,
+  });
+
+  useEffect(() => {
+    if (userProfile) {
+      form.reset(userProfileMapperFront(userProfile));
+    }
+
+    if (!disabled && !form.getValues('address.city.province.id')) {
+      form.setValue('address.city.province.id', '06');
+    }
+  }, [userProfile, disabled, form]);
+
+  const handleSubmit = async (data: ProfileFormDataDto) => {
+    const body = userProfileMapperBack(data);
     try {
-      // Aquí iría la llamada a la API para actualizar el perfil
-      // Por ahora simulamos una actualización exitosa
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      onSave();
+      await updateMutation.mutateAsync(body);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar el perfil. Inténtalo de nuevo.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+      // El error ya es manejado por onError de la mutación, así que no hacemos nada aquí
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        {/* Información de contacto */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Mail className="mr-2 h-5 w-5" />
-              Información de Contacto
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nombre</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Apellido</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="dni"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>DNI</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Teléfono</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Información personal */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="mr-2 h-5 w-5" />
-              Información Personal
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="birthDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fecha de Nacimiento</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Género</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona un género" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="masculino">Masculino</SelectItem>
-                        <SelectItem value="femenino">Femenino</SelectItem>
-                        <SelectItem value="otro">Otro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="nationality"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nacionalidad</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="language"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Idioma</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona un idioma" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="español">Español</SelectItem>
-                        <SelectItem value="inglés">Inglés</SelectItem>
-                        <SelectItem value="francés">Francés</SelectItem>
-                        <SelectItem value="alemán">Alemán</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <Separator className="my-4" />
-            
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Biografía</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      {...field} 
-                      placeholder="Cuéntanos un poco sobre ti..."
-                      rows={3}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Dirección */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <MapPin className="mr-2 h-5 w-5" />
-              Dirección
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="address.street"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Calle</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="address.number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Número</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="address.apartment"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Apartamento (opcional)</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="address.neighborhood"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Barrio (opcional)</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </CardContent>
-        </Card>
+      <form
+        onSubmit={form.handleSubmit(handleSubmit, (errors) => {
+          console.log('errors', errors);
+        })}
+        className='mt-6 space-y-6'
+      >
+        <FormProvider form={form}>
+          <ProfileTabs disabled={disabled} />
+        </FormProvider>
 
         {/* Botones de acción */}
-        <div className="flex justify-end space-x-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Cancelar
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar Cambios"}
-          </Button>
-        </div>
+        {!disabled && (
+          <div className='flex justify-end space-x-4'>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={onCancel}
+              disabled={updateMutation.isPending}
+            >
+              Cancelar
+            </Button>
+            <Button type='submit' disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </div>
+        )}
       </form>
     </Form>
   );
-} 
+}
