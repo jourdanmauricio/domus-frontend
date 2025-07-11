@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Lock, User } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Lock, User, Edit, Pencil } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 import { Button } from '@/components/ui';
@@ -11,10 +11,14 @@ import { ChangePasswordModal } from '@/components/profile/change-password-modal'
 
 type BasicInfoProps = {
   userProfile?: UserBackendDto;
+  disabled?: boolean;
+  onAvatarSelect?: (file: File) => void;
+  previewImage?: string | null;
 };
 
-const BasicInfo = ({ userProfile }: BasicInfoProps) => {
+const BasicInfo = ({ userProfile, disabled, onAvatarSelect, previewImage }: BasicInfoProps) => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: session } = useSession();
 
@@ -26,6 +30,20 @@ const BasicInfo = ({ userProfile }: BasicInfoProps) => {
       .toUpperCase()
       .slice(0, 4);
   };
+
+  const handleAvatarClick = () => {
+    if (disabled && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && onAvatarSelect) {
+      onAvatarSelect(file);
+    }
+  };
+
   return (
     <>
       <Card className='mt-6'>
@@ -35,25 +53,37 @@ const BasicInfo = ({ userProfile }: BasicInfoProps) => {
               <User className='mr-2 h-5 w-5' />
               Información Básica
             </div>
-            <Button variant='outline' onClick={() => setIsPasswordModalOpen(true)}>
-              Cambiar Contraseña
-              <Lock className='mr-1 h-3 w-3' />
-            </Button>
+            <div className='flex gap-2'>
+              <Button variant='outline' onClick={() => setIsPasswordModalOpen(true)}>
+                Cambiar Contraseña
+                <Lock className='mr-1 h-3 w-3' />
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className='flex items-center space-x-4'>
-            <Avatar className='h-16 w-16'>
-              <AvatarImage
-                src={userProfile?.profile?.avatarUrl || ''}
-                alt={userProfile?.profile?.firstName || ''}
-              />
-              <AvatarFallback>
-                {getInitials(
-                  `${userProfile?.profile?.firstName || 'U'} ${userProfile?.profile?.lastName || ''}`
-                )}
-              </AvatarFallback>
-            </Avatar>
+            <div className='relative'>
+              <Avatar
+                className={`h-16 w-16 ${disabled ? 'cursor-pointer hover:opacity-80' : ''}`}
+                onClick={handleAvatarClick}
+              >
+                <AvatarImage
+                  src={previewImage ?? userProfile?.profile?.avatarUrl ?? undefined}
+                  alt={userProfile?.profile?.firstName || ''}
+                />
+                <AvatarFallback>
+                  {getInitials(
+                    `${userProfile?.profile?.firstName || 'U'} ${userProfile?.profile?.lastName || ''}`
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              {disabled && (
+                <div className='absolute -bottom-1 -right-1 rounded-full bg-primary p-1 text-primary-foreground shadow-md'>
+                  <Pencil className='h-3 w-3' />
+                </div>
+              )}
+            </div>
             <div className='flex-1'>
               <h3 className='text-lg font-semibold'>
                 {userProfile?.profile?.firstName && userProfile?.profile?.lastName
@@ -73,6 +103,15 @@ const BasicInfo = ({ userProfile }: BasicInfoProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Input oculto para seleccionar archivo */}
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='image/*'
+        className='hidden'
+        onChange={handleFileChange}
+      />
 
       {/* Modal de cambio de contraseña */}
       <ChangePasswordModal

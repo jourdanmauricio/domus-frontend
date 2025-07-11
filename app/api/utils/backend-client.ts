@@ -51,6 +51,16 @@ export class BackendClient {
     try {
       const headers = await this.getAuthHeaders();
 
+      // Si es FormData, usar axios en lugar de fetch
+      if (body instanceof FormData) {
+        const { 'Content-Type': _, ...headersWithoutContentType } = headers;
+        const response = await axios.post(`${API_BASE_URL}${endpoint}`, body, {
+          headers: headersWithoutContentType,
+        });
+        return { data: response.data, status: response.status };
+      }
+
+      // Para JSON, usar fetch como antes
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers,
@@ -77,6 +87,15 @@ export class BackendClient {
   static async put<T = any>(endpoint: string, body: any): Promise<BackendResponse<T>> {
     try {
       const headers = await this.getAuthHeaders();
+
+      // Si es FormData, no incluir Content-Type para que axios lo maneje automáticamente
+      if (body instanceof FormData) {
+        const { 'Content-Type': _, ...headersWithoutContentType } = headers;
+        const response = await axios.put(`${API_BASE_URL}${endpoint}`, body, {
+          headers: headersWithoutContentType,
+        });
+        return { data: response.data, status: response.status };
+      }
 
       const response = await axios.put(`${API_BASE_URL}${endpoint}`, body, {
         headers,

@@ -17,7 +17,19 @@ export async function POST(
 ) {
   const { path: pathSegments } = await params;
   const path = `/${pathSegments.join('/')}`;
-  const body = await request.json();
+
+  // Detectar si es FormData o JSON
+  const contentType = request.headers.get('content-type') || '';
+
+  let body;
+  if (contentType.includes('multipart/form-data')) {
+    // Es FormData (para subir archivos)
+    body = await request.formData();
+  } else {
+    // Es JSON
+    body = await request.json();
+  }
+
   const response = await BackendClient.post(path, body);
   return createApiResponse(response);
 }
@@ -28,7 +40,19 @@ export async function PUT(
 ) {
   const { path: pathSegments } = await params;
   const path = `/${pathSegments.join('/')}`;
-  const body = await request.json();
+
+  // Detectar si es FormData o JSON
+  const contentType = request.headers.get('content-type') || '';
+
+  let body;
+  if (contentType.includes('multipart/form-data')) {
+    // Es FormData (para subir archivos)
+    body = await request.formData();
+  } else {
+    // Es JSON
+    body = await request.json();
+  }
+
   const response = await BackendClient.put(path, body);
   return createApiResponse(response);
 }

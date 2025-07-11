@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
 
   ME: '/api/users/me',
   CHANGE_PASSWORD: '/api/users/me/password',
+  AVATAR: '/api/users/me/avatar',
   USERS: '/api/users',
   PROVINCES: '/api/geography/provinces',
   CITIES: '/api/geography/provinces/:provinceId/cities',

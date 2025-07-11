@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Edit, X } from 'lucide-react';
 
 import { QUERY_KEYS } from '@/lib/constants';
@@ -9,22 +9,107 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ProfileForm } from './profile-form';
 import { BasicInfo } from '@/components/profile/basic-info';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersService } from '@/lib/services/users.service';
+import { UserSendProfileDto } from '@/lib/types/users';
+import { toast } from '@/hooks/use-toast';
+import { mapAxiosError } from '@/lib/utils/error-mapper';
+import { BackendResponse } from '@/app/api/utils/backend-client';
 
 export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const { data: userProfile, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USERS.ME],
     queryFn: () => usersService.getProfile(),
   });
 
-  // console.log('userProfile!!!!!!!!!!!!!!!!!!!!!', userProfile);
+  // Mutation para actualizar perfil
+  const updateProfileMutation = useMutation({
+    mutationFn: (data: UserSendProfileDto) => usersService.updateProfile(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS.ME] });
+      toast({
+        title: 'Perfil actualizado correctamente',
+        variant: 'success',
+      });
+    },
+    onError: (error: BackendResponse) => {
+      const { message } = mapAxiosError(error);
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'error',
+      });
+    },
+  });
+
+  // Mutation para subir avatar
+  const uploadAvatarMutation = useMutation({
+    mutationFn: (file: File) => usersService.uploadAvatar(file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS.ME] });
+      toast({
+        title: 'Avatar actualizado correctamente',
+        variant: 'success',
+      });
+    },
+    onError: (error: BackendResponse) => {
+      const { message } = mapAxiosError(error);
+      toast({
+        title: 'Error',
+        description: message,
+        variant: 'error',
+      });
+    },
+  });
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
+    if (!isEditing) {
+      // Limpiar estado al entrar en modo edición
+      setSelectedAvatarFile(null);
+      setPreviewImage(null);
+    }
   };
+
+  const handleAvatarSelect = (file: File) => {
+    setSelectedAvatarFile(file);
+    // Crear URL para previsualización
+    const imageUrl = URL.createObjectURL(file);
+    setPreviewImage(imageUrl);
+  };
+
+  const handleFormSubmit = async (formData: UserSendProfileDto) => {
+    try {
+      // 1. Actualizar perfil
+      await updateProfileMutation.mutateAsync(formData);
+
+      // 2. Si hay avatar seleccionado, subirlo
+      if (selectedAvatarFile) {
+        await uploadAvatarMutation.mutateAsync(selectedAvatarFile);
+      }
+
+      // 3. Limpiar estado y salir del modo edición
+      setSelectedAvatarFile(null);
+      setPreviewImage(null);
+      setIsEditing(false);
+    } catch (error) {
+      // Los errores ya son manejados por las mutations
+    }
+  };
+
+  // Limpiar la URL de previsualización cuando el componente se desmonte
+  useEffect(() => {
+    return () => {
+      if (previewImage) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
 
   if (isLoading) {
     return (
@@ -60,6 +145,8 @@ export function ProfilePage() {
     );
   }
 
+  const isSubmitting = updateProfileMutation.isPending || uploadAvatarMutation.isPending;
+
   return (
     <div className=''>
       <div className='flex items-center justify-between'>
@@ -83,15 +170,21 @@ export function ProfilePage() {
       </div>
 
       {/* Información Básica */}
-      <BasicInfo userProfile={userProfile} />
+      <BasicInfo
+        userProfile={userProfile}
+        disabled={isEditing}
+        onAvatarSelect={handleAvatarSelect}
+        previewImage={previewImage}
+      />
 
       {/* Formulario de perfil */}
       <div className=''>
         <ProfileForm
           userProfile={userProfile}
-          onSave={() => setIsEditing(false)}
+          onFormSubmit={handleFormSubmit}
           onCancel={() => setIsEditing(false)}
           disabled={!isEditing}
+          isSubmitting={isSubmitting}
         />
       </div>
     </div>

@@ -5,15 +5,9 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { QUERY_KEYS } from '@/lib/constants';
-import { mapAxiosError } from '@/lib/utils/error-mapper';
 import { FormProvider } from '@/lib/contexts/form-context';
 import { Button, Form } from '@/components/ui';
-import { toast } from '@/hooks/use-toast';
 import { profileSchema } from '@/lib/schemas/users';
-import { usersService } from '@/lib/services/users.service';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { BackendResponse } from '@/app/api/utils/backend-client';
 import { UserBackendDto, UserSendProfileDto } from '@/lib/types/users';
 import {
   userProfileDefaultValues,
@@ -26,34 +20,19 @@ export type ProfileFormDataDto = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
   userProfile?: UserBackendDto;
-  onSave: () => void;
+  onFormSubmit: (data: UserSendProfileDto) => void;
   onCancel: () => void;
   disabled?: boolean;
+  isSubmitting?: boolean;
 }
 
-export function ProfileForm({ userProfile, onSave, onCancel, disabled = false }: ProfileFormProps) {
-  const queryClient = useQueryClient();
-
-  const updateMutation = useMutation({
-    mutationFn: (data: UserSendProfileDto) => usersService.updateProfile(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS.ME] });
-      toast({
-        title: 'Perfil actualizado correctamente',
-        variant: 'success',
-      });
-      onSave();
-    },
-    onError: (error: BackendResponse) => {
-      const { message } = mapAxiosError(error);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
-    },
-  });
-
+export function ProfileForm({
+  userProfile,
+  onFormSubmit,
+  onCancel,
+  disabled = false,
+  isSubmitting = false,
+}: ProfileFormProps) {
   const form = useForm<ProfileFormDataDto>({
     resolver: zodResolver(profileSchema),
     defaultValues: userProfileDefaultValues,
@@ -71,11 +50,7 @@ export function ProfileForm({ userProfile, onSave, onCancel, disabled = false }:
 
   const handleSubmit = async (data: ProfileFormDataDto) => {
     const body = userProfileMapperBack(data);
-    try {
-      await updateMutation.mutateAsync(body);
-    } catch (error) {
-      // El error ya es manejado por onError de la mutación, así que no hacemos nada aquí
-    }
+    onFormSubmit(body); // Solo notifica a ProfilePage
   };
 
   return (
@@ -93,16 +68,11 @@ export function ProfileForm({ userProfile, onSave, onCancel, disabled = false }:
         {/* Botones de acción */}
         {!disabled && (
           <div className='flex justify-end space-x-4'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={onCancel}
-              disabled={updateMutation.isPending}
-            >
+            <Button type='button' variant='outline' onClick={onCancel} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type='submit' disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? 'Guardando...' : 'Guardar'}
+            <Button type='submit' disabled={isSubmitting}>
+              {isSubmitting ? 'Guardando...' : 'Guardar'}
             </Button>
           </div>
         )}
