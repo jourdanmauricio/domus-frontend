@@ -17,8 +17,10 @@ import {
 import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import 'keen-slider/keen-slider.min.css';
 import { ImagesContainer } from '@/components/form-generics/images-gallery/images-container';
+import { useFormContext } from '@/lib/contexts/form-context';
 
 const ImagesGalery = () => {
+  const { form } = useFormContext();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [containerKey, setContainerKey] = useState(0); // Key para forzar re-montaje
 
@@ -45,20 +47,43 @@ const ImagesGalery = () => {
     };
   }, [imageFiles]);
 
-  const handleFilesChange = useCallback((newFiles: FileItem[]) => {
-    setFiles(newFiles);
-    // Forzar re-montaje del container cuando cambien los archivos
-    setContainerKey((prev) => prev + 1);
-  }, []);
+  // Función para sincronizar archivos con el formulario
+  const syncFilesWithForm = useCallback(
+    (currentFiles: FileItem[]) => {
+      const imageFiles = currentFiles
+        .filter((file) => file.fileType === 'image')
+        .map((file) => file.file);
+      const documentFiles = currentFiles
+        .filter((file) => file.fileType === 'document')
+        .map((file) => file.file);
+
+      form.setValue('images', imageFiles, { shouldValidate: true });
+      form.setValue('documents', documentFiles, { shouldValidate: true });
+    },
+    [form]
+  );
+
+  const handleFilesChange = useCallback(
+    (newFiles: FileItem[]) => {
+      setFiles(newFiles);
+      // Sincronizar con el formulario
+      syncFilesWithForm(newFiles);
+      // Forzar re-montaje del container cuando cambien los archivos
+      setContainerKey((prev) => prev + 1);
+    },
+    [syncFilesWithForm]
+  );
 
   const removeFile = useCallback(
     (id: string) => {
       const updatedFiles = files.filter((file) => file.id !== id);
       setFiles(updatedFiles);
+      // Sincronizar con el formulario
+      syncFilesWithForm(updatedFiles);
       // Forzar re-montaje del container al eliminar
       setContainerKey((prev) => prev + 1);
     },
-    [files]
+    [files, syncFilesWithForm]
   );
 
   // Icono según extensión
@@ -83,8 +108,6 @@ const ImagesGalery = () => {
 
     return iconMap[extension] || <File className='h-5 w-5 text-gray-500' />;
   };
-
-  console.log('files', files);
 
   return (
     <Card className='pb-8'>

@@ -1,11 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { X, Image as ImageIcon } from 'lucide-react';
 import { forwardRef } from 'react';
 
 import { cn } from '@/lib/utils';
 import { useFormField } from '@/components/ui/form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
 
 type BaseImageFieldProps = {
   label: string;

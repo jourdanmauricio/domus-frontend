@@ -38,6 +38,8 @@ const PropertyFormPage = () => {
       commercialStatus: 'Disponible',
       propertyCondition: '',
       thumbnail: undefined,
+      images: [],
+      documents: [],
       coveredMeters: '',
       uncoveredMeters: '',
       rooms: '',
@@ -84,6 +86,9 @@ const PropertyFormPage = () => {
   });
 
   const onSubmit = (data: z.infer<typeof propertyFormSchema>) => {
+    console.log('Datos del formulario:', data);
+    console.log('Imágenes:', data.images);
+    console.log('Documentos:', data.documents);
     createPropertyMutation.mutate(data);
   };
 

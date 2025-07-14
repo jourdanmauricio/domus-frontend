@@ -137,17 +137,38 @@ const propertiesService = {
 
       console.log('Datos finales para enviar:', JSON.stringify(dataToSend, null, 2));
 
-      // Si hay archivos, usar FormData
-      if (data.thumbnail) {
+      // Verificar si hay archivos para enviar
+      const hasFiles =
+        data.thumbnail ||
+        (data.images && data.images.length > 0) ||
+        (data.documents && data.documents.length > 0);
+
+      if (hasFiles) {
         const formData = new FormData();
 
-        // Agregar el archivo
-        formData.append('thumbnail', data.thumbnail);
+        // Agregar thumbnail si existe
+        if (data.thumbnail) {
+          formData.append('thumbnail', data.thumbnail);
+        }
+
+        // Agregar imágenes si existen
+        if (data.images && data.images.length > 0) {
+          data.images.forEach((image, index) => {
+            formData.append(`images`, image);
+          });
+        }
+
+        // Agregar documentos si existen
+        if (data.documents && data.documents.length > 0) {
+          data.documents.forEach((document, index) => {
+            formData.append(`documents`, document);
+          });
+        }
 
         // Agregar los datos como JSON string en un campo 'data'
         formData.append('data', JSON.stringify(dataToSend));
 
-        console.log('Enviando FormData con archivo y datos JSON');
+        console.log('Enviando FormData con archivos y datos JSON');
         const response = await axios.post(API_ENDPOINTS.PROPERTIES, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',

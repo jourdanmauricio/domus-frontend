@@ -11,6 +11,8 @@ export const propertyFormSchema = z.object({
   commercialStatus: z.string().optional(),
   propertyCondition: z.string().min(1, 'La condición es requerida'),
   thumbnail: z.instanceof(File).optional(),
+  images: z.array(z.instanceof(File)).optional(),
+  documents: z.array(z.instanceof(File)).optional(),
   coveredMeters: z.string().optional(),
   uncoveredMeters: z.string().optional(),
   rooms: z.string().optional(),
