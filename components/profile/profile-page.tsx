@@ -151,8 +151,8 @@ export function ProfilePage() {
     <div className=''>
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-3xl font-bold tracking-tight text-primary'>Mi Perfil</h2>
-          <p className='text-primary/80'>Gestiona tu información personal y preferencias</p>
+          <h2 className='page-title'>Mi Perfil</h2>
+          <p className='page-description'>Gestiona tu información personal y preferencias</p>
         </div>
         <Button onClick={handleEditToggle} variant={isEditing ? 'outline' : 'default'}>
           {isEditing ? (

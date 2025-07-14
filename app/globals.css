@@ -95,6 +95,19 @@ body {
     }
 }
 
+@layer components {
+    .page-title {
+        @apply text-3xl font-bold tracking-tight text-primary;
+    }
+    .page-description {
+        @apply text-muted-foreground;
+    }
+}
+
+@view-transition {
+    navigation: auto;
+}
+
 html,
 body,
 #__next {

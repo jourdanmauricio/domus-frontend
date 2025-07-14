@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { InputField, TextareaField, SelectField, InputDatePicker } from '../../form-generics';
-import { Separator } from '@/components/ui/separator';
+import { TextareaField, SelectField, InputDatePicker } from '../../form-generics';
 import { User } from 'lucide-react';
 import { GENDER_LIST, LANGUAGE_LIST, NATIONALITY_LIST } from '@/lib/constants/list';
 

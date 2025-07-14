@@ -30,7 +30,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className='pb-0'>
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
+        <div className='grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2'>
           <SelectField
             name='address.city.province.id'
             label='Provincia'

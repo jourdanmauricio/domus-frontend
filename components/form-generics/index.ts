@@ -4,3 +4,6 @@ export { SelectField } from './select-field';
 export { InputDatePicker } from './input-date-picker';
 export { CheckboxField } from './checkbox-field';
 export { ComboboxField } from './combobox-field';
+export { ImageField } from './image-field';
+export { ImageUploader } from './image-uploader';
+export { FileUploader } from './images-gallery/file-uploader';

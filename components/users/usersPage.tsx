@@ -55,8 +55,8 @@ export default function UsersPage() {
     <div className='flex h-full flex-col space-y-6 overflow-x-hidden'>
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-3xl font-bold tracking-tight'>Gestión de Usuarios</h2>
-          <p className='text-muted-foreground'>Administra los usuarios del sistema</p>
+          <h2 className='page-title'>Gestión de Usuarios</h2>
+          <p className='page-description'>Administra los usuarios del sistema</p>
         </div>
         <Button>
           <Plus className='mr-2 h-4 w-4' />

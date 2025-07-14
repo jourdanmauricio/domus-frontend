@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   CITIES: '/api/geography/provinces/:provinceId/cities',
   ADD_CITY: '/api/geography/cities',
   ALL_CITIES: '/api/geography/cities',
+  PROPERTIES: '/api/properties',
 } as const;
 
 // Helper function para endpoints dinámicos
