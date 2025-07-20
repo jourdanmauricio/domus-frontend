@@ -5,7 +5,7 @@ export default function PropertiesNewPageServer() {
   return (
     <RoleGuard allowedRoles={['admin']}>
       <div className='mx-auto flex max-w-7xl flex-col gap-6'>
-        <PropertyFormPage />
+        <PropertyFormPage id={'new'} />
       </div>
     </RoleGuard>
   );

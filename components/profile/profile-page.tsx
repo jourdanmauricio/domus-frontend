@@ -15,12 +15,14 @@ import { UserSendProfileDto } from '@/lib/types/users';
 import { toast } from '@/hooks/use-toast';
 import { mapAxiosError } from '@/lib/utils/error-mapper';
 import { BackendResponse } from '@/app/api/utils/backend-client';
+import { useApiError } from '@/hooks/useApiError';
 
 export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const { handleError } = useApiError();
 
   const { data: userProfile, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USERS.ME],
@@ -37,13 +39,8 @@ export function ProfilePage() {
         variant: 'success',
       });
     },
-    onError: (error: BackendResponse) => {
-      const { message } = mapAxiosError(error);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+    onError: (error: any) => {
+      handleError(error, 'actualizar el perfil');
     },
   });
 
@@ -57,13 +54,8 @@ export function ProfilePage() {
         variant: 'success',
       });
     },
-    onError: (error: BackendResponse) => {
-      const { message } = mapAxiosError(error);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'error',
-      });
+    onError: (error: any) => {
+      handleError(error, 'actualizar el avatar');
     },
   });
 

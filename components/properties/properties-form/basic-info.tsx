@@ -81,12 +81,14 @@ const BasicInfo = () => {
               placeholder='Alias del Propietario'
             />
 
+            <div></div>
+
             <TextareaField
               className=''
               name='description'
               label='Descripción'
               placeholder='Descripción'
-              rows={8}
+              rows={10}
             />
 
             <ImageField
@@ -95,7 +97,8 @@ const BasicInfo = () => {
               placeholder='Seleccionar imagen'
               aspectRatio='16/9'
               maxSize={5}
-              className='mx-auto h-72 w-80'
+              className='mx-auto h-56 w-56'
+              objectFit='contain'
             />
           </div>
         </CardContent>

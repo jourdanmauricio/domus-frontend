@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       await logoutMutation.mutateAsync();
       router.push('/');
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.log('Error logging out:', error);
     }
   };
 

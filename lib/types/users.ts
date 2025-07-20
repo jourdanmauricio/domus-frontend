@@ -18,7 +18,7 @@ export type UserBackendDto = {
       number: string;
       apartment: string;
       neighborhood: string | null;
-      postalCode: { code: string | null; id: number | null };
+      postalCode: string;
       latitude: string;
       longitude: string;
       nomenclator: string | null;

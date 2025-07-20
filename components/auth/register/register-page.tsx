@@ -83,7 +83,7 @@ export default function RegisterPage() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleSubmit, (errors) => {
-                  console.log("🔍 Form errors:", errors);
+          
                 })}
                 className="space-y-4"
               >

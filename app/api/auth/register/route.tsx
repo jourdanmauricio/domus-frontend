@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error en registro:", error);
+    console.log("Error en registro:", error);
     return NextResponse.json(
       { error: "Error interno del servidor" },
       { status: 500 }

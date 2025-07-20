@@ -59,7 +59,7 @@ export function RecoveryPasswordPage({ token }: { token: string }) {
       // Redirigir al login
       router.push("/login");
     } catch (error) {
-      console.error("❌ Password reset error:", error);
+      console.log("❌ Password reset error:", error);
       toast({
         title: "Error al cambiar contraseña",
         description: "Por favor, intenta nuevamente.",
@@ -93,7 +93,7 @@ export function RecoveryPasswordPage({ token }: { token: string }) {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit, (errors) => {
-                  console.log(errors);
+              
                 })}
               >
                 <div className="space-y-2">

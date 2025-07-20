@@ -21,6 +21,7 @@ import { changePasswordSchema } from '@/lib/schemas/users';
 import { usersService } from '@/lib/services/users.service';
 import { useMutation } from '@tanstack/react-query';
 import { UpdateUserPasswordDto } from '@/lib/types/users';
+import { useApiError } from '@/hooks/useApiError';
 
 type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 
@@ -41,6 +42,8 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
     },
   });
 
+  const { handleError } = useApiError();
+
   const updateMutation = useMutation({
     mutationFn: (data: UpdateUserPasswordDto) => usersService.updateUserPassword(data),
     onSuccess: () => {
@@ -50,11 +53,7 @@ export function ChangePasswordModal({ isOpen, onClose }: ChangePasswordModalProp
       });
     },
     onError: (error: any) => {
-      toast({
-        title: 'Error',
-        description: 'No se pudo actualizar el perfil. Inténtalo de nuevo.',
-        variant: 'destructive',
-      });
+      handleError(error, 'actualizar la contraseña');
     },
   });
   const handleSubmit = async (data: ChangePasswordFormData) => {

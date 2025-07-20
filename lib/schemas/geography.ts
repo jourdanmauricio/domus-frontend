@@ -23,15 +23,12 @@ export const addressSchema = z
     latitude: z.string().optional(),
     longitude: z.string().optional(),
     nomenclator: z.string().optional(),
-    postalCode: z.object({
-      code: z.string().optional(),
-      id: z.string().optional(),
-    }),
+    postalCode: z.string().optional()
   })
   .superRefine((address, ctx) => {
     const street = address.street?.trim();
     const number = address.number?.trim();
-    const postalCode = address.postalCode?.code?.trim();
+    const postalCode = address.postalCode?.trim();
     const cityId = address.city?.id?.trim();
     const provinciaId = address.city?.province?.id?.trim();
     // Si alguno está completo, todos deben estarlo
@@ -55,7 +52,7 @@ export const addressSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'El código postal es obligatorio',
-        path: ['postalCode', 'code'],
+        path: ['postalCode'],
       });
     }
     if (!provinciaId) {

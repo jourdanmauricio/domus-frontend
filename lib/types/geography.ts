@@ -3,7 +3,7 @@ export type ProvinceBackendDto = {
   nombre: string;
 };
 
-export type CityBackendDto = {
+export type georefCityDto = {
   categoria: string;
   centroide_lat: string;
   centroide_lon: string;
@@ -57,4 +57,30 @@ export type georefAddressResponseDto = {
   total: number;
   parametros: any;
   direcciones: georefAddressDto[];
+};
+
+type cityBackendDto = {
+  id: string;
+  latitude: string;
+  longitude: string;
+  name: string;
+  defaultZoom: number;
+  province: {
+    id: string;
+    latitude: string;
+    longitude: string;
+    name: string;
+  };
+};
+
+export type AddressBackendDto = {
+  street: string;
+  number: string;
+  apartment: string;
+  neighborhood?: string;
+  city: cityBackendDto;
+  postalCode: string;
+  nomenclator: string;
+  latitude: string;
+  longitude: string;
 };

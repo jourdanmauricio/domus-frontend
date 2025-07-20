@@ -1,18 +1,31 @@
 import { z } from 'zod';
 import { addressSchema } from './geography';
 
+// Función helper para verificar si algo es un archivo de manera segura
+const isFile = (item: any): boolean => {
+  return typeof window !== 'undefined' && 
+         item && 
+         typeof item === 'object' && 
+         'name' in item && 
+         'size' in item && 
+         'type' in item &&
+         typeof item.name === 'string' &&
+         typeof item.size === 'number' &&
+         typeof item.type === 'string';
+};
+
 export const propertyFormSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
-  description: z.string().min(1, 'La descripción es requerida'),
+  description: z.string().optional(),
   propertyType: z.string().min(1, 'El tipo de propiedad es requerido'),
   registryNumber: z.string().min(1, 'El número de registro es requerido'),
   functionalUnit: z.string().optional(),
   ownerIntention: z.string().min(1, 'La intención es requerida'),
   commercialStatus: z.string().optional(),
   propertyCondition: z.string().min(1, 'La condición es requerida'),
-  thumbnail: z.instanceof(File).optional(),
-  images: z.array(z.instanceof(File)).optional(),
-  documents: z.array(z.instanceof(File)).optional(),
+  thumbnail: z.union([z.custom<File>((val) => isFile(val)), z.string()]).optional(),
+  images: z.array(z.union([z.custom<File>((val) => isFile(val)), z.string().min(1)])).optional(),
+  documents: z.array(z.union([z.custom<File>((val) => isFile(val)), z.string().min(1)])).optional(),
   coveredMeters: z.string().optional(),
   uncoveredMeters: z.string().optional(),
   rooms: z.string().optional(),

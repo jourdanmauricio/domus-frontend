@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from '@/lib/constants';
 import { UpdateUserPasswordDto, UserBackendDto } from '@/lib/types/users';
-import axios from 'axios';
+import axios from '@/lib/utils/axios-config'; // Cambiar a axios
 
 export interface UpdateUserData {
   firstName?: string;
@@ -16,14 +16,11 @@ export const usersService = {
   },
 
   async updateProfile(data: UpdateUserData): Promise<UserBackendDto> {
-    console.log('updateProfile', data);
     const response = await axios.put(API_ENDPOINTS.ME, data);
-    console.log('response', response);
     return response.data;
   },
 
   async uploadAvatar(file: File): Promise<UserBackendDto> {
-    console.log('uploadAvatar', file);
     const formData = new FormData();
     formData.append('avatar', file);
 
@@ -32,7 +29,6 @@ export const usersService = {
         'Content-Type': 'multipart/form-data',
       },
     });
-    console.log('response', response);
     return response.data;
   },
 

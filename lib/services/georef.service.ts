@@ -1,5 +1,5 @@
 import { georefAddressDto, georefAddressResponseDto } from '@/lib/types/geography';
-import axios from 'axios';
+import axiosInstance from '@/lib/utils/axios-config'; // Usar axiosInstance
 
 const API_ENDPOINTS = {
   BASE_URL: 'https://apis.datos.gob.ar/georef/api',
@@ -7,11 +7,9 @@ const API_ENDPOINTS = {
 
 export const georefService = {
   async getAllCitiesByName(provinceId: string, cityName: string) {
-    const response = await axios.get(
+    const response = await axiosInstance.get(
       `${API_ENDPOINTS.BASE_URL}/localidades?provincia=${provinceId}&nombre=${cityName}&campos=completo&aplanar=true&max=1000`
     );
-    //apis.datos.gob.ar/georef/api/localidades-censales?provincia=06&aplanar=true&campos=estandar&max=10&exacto=true
-
     return response.data;
   },
 
@@ -20,10 +18,9 @@ export const georefService = {
     cityName: string,
     address: string
   ): Promise<georefAddressDto[]> {
-    const response = await axios.get<georefAddressResponseDto>(
+    const response = await axiosInstance.get<georefAddressResponseDto>(
       `${API_ENDPOINTS.BASE_URL}/direcciones?provincia=${provinceId}&localidad=${cityName}&direccion=${address}&campos=estandar&aplanar=true&max=1000`
     );
-
     return response.data.direcciones;
   },
 };

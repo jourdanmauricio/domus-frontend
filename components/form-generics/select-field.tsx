@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import axiosInstance from '@/lib/utils/axios-config'; // Usar axiosInstance
 
 type SelectOption = {
   id: string;
@@ -61,7 +61,7 @@ const SelectFieldComponent = forwardRef<HTMLButtonElement, SelectFieldProps>(
 
     const { data, isLoading } = useQuery({
       queryKey: [`select-${name}`],
-      queryFn: () => axios.get(apiUrl!),
+      queryFn: () => axiosInstance.get(apiUrl!),
       enabled: !!apiUrl,
     });
 

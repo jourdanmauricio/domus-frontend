@@ -1,10 +1,11 @@
-import { ImageFile } from '@/components/form-generics/image-uploader';
 import { useKeenSlider } from 'keen-slider/react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
+import { UnifiedImageItem } from './images-gallery';
+
 type ImagesContainerProps = {
-  images: ImageFile[];
+  images: UnifiedImageItem[];
   removeImage: (id: string) => void;
 };
 
@@ -79,7 +80,7 @@ const ImagesContainer = ({ images, removeImage }: ImagesContainerProps) => {
                 <div className='relative flex h-56 w-full items-center justify-center overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50'>
                   <img
                     src={image.previewUrl}
-                    alt={`Imagen ${image.id}`}
+                    alt={`Imagen ${image.name}`}
                     className='h-full w-full object-contain'
                   />
                   <button
@@ -91,7 +92,7 @@ const ImagesContainer = ({ images, removeImage }: ImagesContainerProps) => {
                     <X className='h-4 w-4' />
                   </button>
                 </div>
-                <p className='mt-1 truncate text-xs text-gray-500'>{image.file.name}</p>
+                <p className='mt-1 truncate text-xs text-gray-500'>{image.name}</p>
               </div>
             ))}
           </div>

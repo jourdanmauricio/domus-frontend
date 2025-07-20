@@ -1,6 +1,7 @@
 // hooks/useAuth.ts
 import { useMutation } from '@tanstack/react-query';
 import { signIn, signOut } from 'next-auth/react';
+import { toast } from '@/hooks/use-toast';
 
 interface LoginCredentials {
   email: string;
@@ -40,6 +41,13 @@ export const useLogin = () => {
 
       return result;
     },
+    onError: (error: any) => {
+      toast({
+        title: 'Credenciales inválidas',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
   });
 };
 
@@ -60,6 +68,13 @@ export const useRegister = () => {
       }
 
       return response.json();
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error al registrar usuario',
+        description: error.message,
+        variant: 'destructive',
+      });
     },
   });
 };

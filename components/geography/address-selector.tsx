@@ -77,7 +77,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
           </div>
 
           <InputField
-            name='address.postalCode.code'
+            name='address.postalCode'
             label='Código Postal'
             placeholder='Código Postal'
             disabled={disabled}

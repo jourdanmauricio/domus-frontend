@@ -4,6 +4,7 @@ export const QUERY_KEYS = {
   DASHBOARD: 'dashboard-data',
   GEOREF_ALL_CITIES: 'georef-all-cities',
   GEOREF_ALL_ADDRESSES: 'georef-all-addresses',
+  PROPERTIES: 'properties',
 
   // Users
   USERS: {
@@ -11,13 +12,6 @@ export const QUERY_KEYS = {
     PROFILE: 'user-profile',
     LIST: 'users-list',
     BY_ID: (id: string) => `user-${id}`,
-  },
-
-  // Properties (futuro)
-  PROPERTIES: {
-    LIST: 'properties-list',
-    BY_ID: (id: string) => `property-${id}`,
-    DETAILS: (id: string) => `property-details-${id}`,
   },
 
   // Posts (futuro)

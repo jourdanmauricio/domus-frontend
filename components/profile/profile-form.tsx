@@ -57,7 +57,7 @@ export function ProfileForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit, (errors) => {
-          console.log('errors', errors);
+      
         })}
         className='mt-6 space-y-6'
       >

@@ -8,6 +8,7 @@ export interface BackendResponse<T = any> {
   data?: T;
   error?: string;
   status: number;
+  details?: any; // Agregar campo para detalles del error
 }
 
 export class BackendClient {
@@ -74,7 +75,7 @@ export class BackendClient {
       const data = await response.json();
       return { data, status: response.status };
     } catch (error) {
-      console.error(`Error en API ${endpoint}:`, error);
+      console.log(`Error en API ${endpoint}:`, error);
 
       if (error instanceof Error && error.message === 'No autorizado') {
         return { error: 'No autorizado', status: 401 };
@@ -107,8 +108,9 @@ export class BackendClient {
         const newError = {
           error: error.response?.data?.message || 'Error del servidor',
           status: error.response?.status || 500,
+          details: error.response?.data, // Preservar todos los detalles del error
         };
-        console.error(`Error en API ${endpoint}:`, newError);
+        console.log(`Error en API ${endpoint}:`, newError);
         return newError;
       }
 
@@ -132,7 +134,7 @@ export class BackendClient {
       const data = await response.json();
       return { data, status: response.status };
     } catch (error) {
-      console.error(`Error en API ${endpoint}:`, error);
+      console.log(`Error en API ${endpoint}:`, error);
 
       if (error instanceof Error && error.message === 'No autorizado') {
         return { error: 'No autorizado', status: 401 };
@@ -146,6 +148,19 @@ export class BackendClient {
 // Función helper para convertir la respuesta del backend a NextResponse
 export const createApiResponse = (backendResponse: BackendResponse) => {
   if (backendResponse.error) {
+    // Si el backendResponse tiene detalles del error, preservarlos
+    if (backendResponse.details) {
+      return NextResponse.json(
+        {
+          error: backendResponse.status,
+          message: backendResponse.error,
+          ...backendResponse.details, // Preservar todos los detalles del error
+        },
+        { status: backendResponse.status }
+      );
+    }
+
+    // Fallback para errores simples
     return NextResponse.json(
       {
         error: backendResponse.status,

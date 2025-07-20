@@ -33,10 +33,7 @@ export const userProfileMapperFront = (userProfile: UserBackendDto) => {
       neighborhood: userProfile.profile?.address?.neighborhood || '',
       nomenclator: userProfile.profile?.address?.nomenclator || '',
       searchCity: '',
-      postalCode: {
-        code: userProfile.profile?.address?.postalCode?.code || '',
-        id: userProfile.profile?.address?.postalCode?.id?.toString() || '',
-      },
+      postalCode: userProfile.profile?.address?.postalCode || '',
       latitude: userProfile.profile?.address?.latitude || '',
       longitude: userProfile.profile?.address?.longitude || '',
     },
@@ -69,10 +66,7 @@ export const userProfileDefaultValues = {
     apartment: '',
     neighborhood: '',
     searchCity: '',
-    postalCode: {
-      code: '',
-      id: '',
-    },
+    postalCode: '',
     nomenclator: '',
     latitude: '',
     longitude: '',
@@ -87,7 +81,7 @@ const hasValidAddressData = (address: ProfileFormDataDto['address']) => {
     address.apartment?.trim() ||
     address.neighborhood?.trim() ||
     address.city.id?.trim() ||
-    address.postalCode.code?.trim() ||
+    address.postalCode?.trim() ||
     address.nomenclator?.trim() ||
     address.latitude?.trim() ||
     address.longitude?.trim()
@@ -117,7 +111,7 @@ export const userProfileMapperBack = (data: ProfileFormDataDto) => {
         apartment: data.address.apartment,
         neighborhood: data.address.neighborhood,
         cityId: data.address.city.id,
-        postalCode: data.address.postalCode.code,
+        postalCode: data.address.postalCode,
         nomenclator: data.address.nomenclator,
         latitude: data.address.latitude,
         longitude: data.address.longitude,

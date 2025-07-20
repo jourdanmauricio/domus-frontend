@@ -24,12 +24,11 @@ export default function UsersPage() {
   });
 
   const onDownload = useCallback(async (row: UserBackendDto) => {
-    console.log('Download:', row);
+    // TODO: Implementar descarga
   }, []);
 
   const onEdit = useCallback((row: UserBackendDto) => {
-    // Implementar edición del query
-    console.log('Edit query:', row);
+    // TODO: Implementar edición
   }, []);
 
   async function handleDialogConfirmation() {

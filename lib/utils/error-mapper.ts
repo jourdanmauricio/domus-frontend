@@ -5,10 +5,25 @@ export interface ApiError {
 }
 
 export const mapAxiosError = (error: any): ApiError => {
-  console.error('Error completo en mapAxiosError:', error);
+  console.log('Error completo en mapAxiosError:', error);
 
   if (error?.response?.data) {
-    console.error('Datos de error del servidor:', error.response.data);
+    console.log('Datos de error del servidor:', error.response.data);
+  }
+
+  // Manejar errores de validación con array de errores
+  if (error?.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+    const validationErrors = error.response.data.errors;
+    const formattedMessage = validationErrors.join('; ');
+
+    return {
+      message: error.response.data.message || 'Error de validación',
+      status: error.response.status || 400,
+      details: {
+        ...error.response.data,
+        formattedErrors: formattedMessage,
+      },
+    };
   }
 
   return {
@@ -25,6 +40,21 @@ export const mapAxiosError = (error: any): ApiError => {
 export const createErrorHandler =
   (defaultMessage: string) =>
   (error: any): ApiError => {
+    // Manejar errores de validación con array de errores
+    if (error?.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+      const validationErrors = error.response.data.errors;
+      const formattedMessage = validationErrors.join('; ');
+
+      return {
+        message: error.response.data.message || 'Error de validación',
+        status: error.response.status || 400,
+        details: {
+          ...error.response.data,
+          formattedErrors: formattedMessage,
+        },
+      };
+    }
+
     return {
       message: error?.response?.data?.message || error?.response?.data?.error || defaultMessage,
       status: error?.response?.status || 500,

@@ -184,7 +184,7 @@ export const FileUploader = ({
             hash: fileHash,
           });
         } catch (error) {
-          console.error('Error processing file:', error);
+          console.log('Error processing file:', error);
           // Si falla la generación del hash, continuar sin hash
           const clonedFile = new (File as any)([file], file.name, { type: file.type });
           newFiles.push({

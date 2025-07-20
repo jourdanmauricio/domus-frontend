@@ -16,8 +16,9 @@ type BaseImageFieldProps = {
   disabled?: boolean;
   accept?: string;
   maxSize?: number; // en MB
-  aspectRatio?: 'square' | '16/9' | '4/3';
+  aspectRatio?: 'square' | '16/9' | '4/3' | null;
   placeholder?: string;
+  objectFit?: 'cover' | 'contain'; // Nuevo: controla si recorta o no
 };
 
 type ImageFieldProps = BaseImageFieldProps & {
@@ -39,6 +40,7 @@ const ImageFieldComponent = forwardRef<HTMLInputElement, ImageFieldProps>(
       maxSize = 5, // 5MB por defecto
       aspectRatio = 'square',
       placeholder = 'Seleccionar imagen',
+      objectFit = 'cover', // Por defecto recorta
       value,
       onChange,
       ...props
@@ -124,18 +126,36 @@ const ImageFieldComponent = forwardRef<HTMLInputElement, ImageFieldProps>(
         return '';
       }
 
+      // Si no se especifica aspectRatio, no aplicar ninguna clase
+      if (!aspectRatio) {
+        return '';
+      }
+
       switch (aspectRatio) {
         case '16/9':
           return 'aspect-video';
         case '4/3':
           return 'aspect-[4/3]';
-        default:
+        case 'square':
           return 'aspect-square';
+        default:
+          return '';
       }
     };
 
+    const getHeightClass = () => {
+      // Extraer clases de altura del className
+      const heightClasses = className?.match(/h-\d+/g);
+      return heightClasses ? heightClasses.join(' ') : '';
+    };
+
+    const getFilteredClassName = () => {
+      // Remover clases de altura del className para el FormItem
+      return className?.replace(/h-\d+/g, '').trim() || '';
+    };
+
     return (
-      <FormItem className={className}>
+      <FormItem className={getFilteredClassName()}>
         <FormLabel className={cn('text-sm font-medium text-gray-700', labelClassName)}>
           {label}
         </FormLabel>
@@ -147,10 +167,18 @@ const ImageFieldComponent = forwardRef<HTMLInputElement, ImageFieldProps>(
                   className={cn(
                     'relative overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50',
                     getAspectRatioClass(),
+                    getHeightClass(),
                     error && 'border-destructive'
                   )}
                 >
-                  <img src={previewUrl} alt='Preview' className='h-full w-full object-cover' />
+                  <img
+                    src={previewUrl}
+                    alt='Preview'
+                    className={cn(
+                      'h-full w-full',
+                      objectFit === 'contain' ? 'object-contain' : 'object-cover'
+                    )}
+                  />
                   {!disabled && (
                     <button
                       type='button'
@@ -168,6 +196,7 @@ const ImageFieldComponent = forwardRef<HTMLInputElement, ImageFieldProps>(
                 className={cn(
                   'relative cursor-pointer rounded-lg border-2 border-dashed transition-colors',
                   getAspectRatioClass(),
+                  getHeightClass(),
                   dragActive
                     ? 'border-primary bg-primary/5'
                     : error

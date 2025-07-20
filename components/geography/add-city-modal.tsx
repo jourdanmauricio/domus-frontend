@@ -24,11 +24,12 @@ import {
 } from '@/components/ui/command';
 import { API_ENDPOINTS, QUERY_KEYS } from '@/lib/constants';
 import { georefService } from '@/lib/services/georef.service';
-import { CityBackendDto, CityMapperDto } from '@/lib/types/geography';
+import { georefCityDto, CityMapperDto } from '@/lib/types/geography';
 import { geographyService } from '@/lib/services/geography.service';
 import { toast } from '@/hooks/use-toast';
 import { BackendResponse } from '@/app/api/utils/backend-client';
 import { mapAxiosError } from '@/lib/utils/error-mapper';
+import { useApiError } from '@/hooks/useApiError';
 
 type AddCityModalProps = {
   isOpen: boolean;
@@ -51,6 +52,7 @@ const AddCityModal = ({ isOpen, onClose, provinceId, onSuccess }: AddCityModalPr
   const [shouldSearch, setShouldSearch] = useState(false);
 
   const queryClient = useQueryClient();
+  const { handleError } = useApiError();
 
   const handleClose = () => {
     onClose();
@@ -84,11 +86,11 @@ const AddCityModal = ({ isOpen, onClose, provinceId, onSuccess }: AddCityModalPr
 
       // Filtrar primero las categorías no deseadas
       const filteredCities = response.localidades.filter(
-        (el: CityBackendDto) => el.categoria !== 'Componente de localidad compuesta'
+        (el: georefCityDto) => el.categoria !== 'Componente de localidad compuesta'
       );
 
       // Agrupar por nombre para detectar duplicados
-      const citiesByName = filteredCities.reduce((acc: any, city: CityBackendDto) => {
+      const citiesByName = filteredCities.reduce((acc: any, city: georefCityDto) => {
         const name = city.nombre;
         if (!acc[name]) {
           acc[name] = [];
@@ -130,7 +132,7 @@ const AddCityModal = ({ isOpen, onClose, provinceId, onSuccess }: AddCityModalPr
 
   const createMutation = useMutation({
     mutationFn: (data: any) => geographyService.addCity(data),
-    onSuccess: async (createdCity: CityBackendDto) => {
+    onSuccess: async (createdCity: georefCityDto) => {
       // Invalidar las queries de ciudades para que se actualicen los datos
       await queryClient.invalidateQueries({ queryKey: ['select-address.city'] });
       // Invalidar cualquier query que contenga 'cities' para asegurar que se actualicen
@@ -149,13 +151,8 @@ const AddCityModal = ({ isOpen, onClose, provinceId, onSuccess }: AddCityModalPr
       handleClose();
       form.reset();
     },
-    onError: (error: BackendResponse) => {
-      const { message } = mapAxiosError(error);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+    onError: (error: any) => {
+      handleError(error, 'agregar la ciudad');
     },
   });
 
@@ -201,7 +198,7 @@ const AddCityModal = ({ isOpen, onClose, provinceId, onSuccess }: AddCityModalPr
               placeholder='Selecciona una provincia'
               apiUrl={API_ENDPOINTS.PROVINCES}
               onChange={(value) => {
-                form.setValue('provinceId', value);
+                form.setValue('provinceId', value.id);
                 form.setValue('searchCity', '');
                 form.setValue('cp', '');
               }}
