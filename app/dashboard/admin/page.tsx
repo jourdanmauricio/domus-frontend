@@ -16,7 +16,7 @@ export default function DashboardPage() {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: [QUERY_KEYS.USERS.ME],
+    queryKey: [QUERY_KEYS.ME],
     queryFn: () => usersService.getProfile(),
   });
   const isAdmin = session?.user.roles?.includes('admin');

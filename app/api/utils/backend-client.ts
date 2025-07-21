@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '../auth/[...nextauth]/route';
+import { auth } from '@/lib/auth';
 import axios from 'axios';
 
 const API_BASE_URL = process.env.BACKEND_URL;

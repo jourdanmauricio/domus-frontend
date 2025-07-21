@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  if (!session) {
+  if (!session || !session.user) {
     return null;
   }
 
@@ -53,7 +53,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       />
       <div className='flex h-full min-h-0 flex-1'>
         <DashboardSidebar
-          userRoles={session.user.roles}
+          userRoles={session.user.roles || []}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
