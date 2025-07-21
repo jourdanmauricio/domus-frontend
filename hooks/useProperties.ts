@@ -1,9 +1,10 @@
+import { useRouter } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { propertiesService, CreatePropertyData } from '@/lib/services/properties.service';
+import { mapAxiosError } from '@/lib/utils/error-mapper';
 import { QUERY_KEYS } from '@/lib/constants';
 import { toast } from '@/hooks/use-toast';
-import { mapAxiosError } from '@/lib/utils/error-mapper';
-import { useRouter } from 'next/navigation';
 
 export const useCreateProperty = () => {
   const router = useRouter();
@@ -30,12 +31,14 @@ export const useCreateProperty = () => {
         description: description,
         variant: 'destructive',
       });
+      router.push(`/dashboard/admin/properties`);
     },
   });
 };
 
 export const useUpdateProperty = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: ({ data, id }: { data: CreatePropertyData; id: string }) =>
@@ -47,6 +50,7 @@ export const useUpdateProperty = () => {
         description: 'La propiedad ha sido actualizada en el sistema',
         variant: 'success',
       });
+      router.push(`/dashboard/admin/properties`);
     },
     onError: (error: any) => {
       const { message, details } = mapAxiosError(error);
@@ -74,6 +78,6 @@ export const useGetPropertyById = (id: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.PROPERTIES, id],
     queryFn: () => propertiesService.getPropertyById(id),
-    enabled: !!id,
+    enabled: id !== 'new' && id !== '',
   });
 };

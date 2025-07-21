@@ -6,4 +6,4 @@ export { CheckboxField } from './checkbox-field';
 export { ComboboxField } from './combobox-field';
 export { ImageField } from './image-field';
 export { ImageUploader } from './image-uploader';
-export { FileUploader } from './images-gallery/file-uploader';
+export { FileUploader } from './documents-gallery/file-uploader';

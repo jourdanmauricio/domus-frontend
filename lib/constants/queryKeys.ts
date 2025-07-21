@@ -5,14 +5,15 @@ export const QUERY_KEYS = {
   GEOREF_ALL_CITIES: 'georef-all-cities',
   GEOREF_ALL_ADDRESSES: 'georef-all-addresses',
   PROPERTIES: 'properties',
+  ME: 'user-profile',
+  USERS: 'users',
 
   // Users
-  USERS: {
-    ME: 'user-profile',
-    PROFILE: 'user-profile',
-    LIST: 'users-list',
-    BY_ID: (id: string) => `user-${id}`,
-  },
+  // USERS: {
+  //   PROFILE: 'user-profile',
+  //   LIST: 'users-list',
+  //   BY_ID: (id: string) => `user-${id}`,
+  // },
 
   // Posts (futuro)
   POSTS: {

@@ -3,20 +3,22 @@ import { addressSchema } from './geography';
 
 // Función helper para verificar si algo es un archivo de manera segura
 const isFile = (item: any): boolean => {
-  return typeof window !== 'undefined' && 
-         item && 
-         typeof item === 'object' && 
-         'name' in item && 
-         'size' in item && 
-         'type' in item &&
-         typeof item.name === 'string' &&
-         typeof item.size === 'number' &&
-         typeof item.type === 'string';
+  return (
+    typeof window !== 'undefined' &&
+    item &&
+    typeof item === 'object' &&
+    'name' in item &&
+    'size' in item &&
+    'type' in item &&
+    typeof item.name === 'string' &&
+    typeof item.size === 'number' &&
+    typeof item.type === 'string'
+  );
 };
 
 export const propertyFormSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido'),
-  description: z.string().optional(),
+  description: z.string().min(1, 'La descripción es requerida'),
   propertyType: z.string().min(1, 'El tipo de propiedad es requerido'),
   registryNumber: z.string().min(1, 'El número de registro es requerido'),
   functionalUnit: z.string().optional(),
@@ -26,9 +28,9 @@ export const propertyFormSchema = z.object({
   thumbnail: z.union([z.custom<File>((val) => isFile(val)), z.string()]).optional(),
   images: z.array(z.union([z.custom<File>((val) => isFile(val)), z.string().min(1)])).optional(),
   documents: z.array(z.union([z.custom<File>((val) => isFile(val)), z.string().min(1)])).optional(),
-  coveredMeters: z.string().optional(),
-  uncoveredMeters: z.string().optional(),
-  rooms: z.string().optional(),
+  coveredMeters: z.string().min(1, 'Los metros cuadrados cubiertos son requeridos'),
+  uncoveredMeters: z.string().min(1, 'Los metros cuadrados descubiertos son requeridos'),
+  rooms: z.string().min(1, 'La cantidad de habitaciones es requerida'),
   bathrooms: z.string().min(1, 'La cantidad de baños es requerida'),
   yearOfConstruction: z.string().optional(),
   electricityIdentifier: z.string().optional(),

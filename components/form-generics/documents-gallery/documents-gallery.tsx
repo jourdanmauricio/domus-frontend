@@ -11,10 +11,11 @@ import 'keen-slider/keen-slider.min.css';
 import { useCallback, useState, useEffect, useMemo } from 'react';
 
 import { FileUploader } from '@/components/form-generics';
-import { FileItem } from '@/components/form-generics/images-gallery/file-uploader';
+import { FileItem } from '@/components/form-generics/documents-gallery/file-uploader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ImagesContainer } from '@/components/form-generics/images-gallery/images-container';
+import { ImagesContainer } from '@/components/form-generics/documents-gallery/images-container';
 import { useFormContext } from '@/lib/contexts/form-context';
+import { DocumentsContainer } from '@/components/form-generics/documents-gallery/documents-container';
 
 // Tipo unificado para manejar tanto archivos como URLs
 export interface UnifiedImageItem {
@@ -42,7 +43,7 @@ const isFile = (item: any): boolean => {
   );
 };
 
-const ImagesGalery = () => {
+const DocumentsGallery = () => {
   const { form } = useFormContext();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [containerKey, setContainerKey] = useState(0); // Key para forzar re-montaje
@@ -198,29 +199,6 @@ const ImagesGalery = () => {
     [files, syncFilesWithForm, existingImageUrls, existingDocumentUrls, form]
   );
 
-  // Icono según extensión
-  const getFileIcon = (extension: string) => {
-    const iconMap: Record<string, React.ReactNode> = {
-      // Imágenes
-      jpg: <ImageIcon className='h-5 w-5 text-green-500' />,
-      jpeg: <ImageIcon className='h-5 w-5 text-green-500' />,
-      png: <ImageIcon className='h-5 w-5 text-green-500' />,
-      gif: <ImageIcon className='h-5 w-5 text-green-500' />,
-      webp: <ImageIcon className='h-5 w-5 text-green-500' />,
-
-      // Documentos
-      pdf: <FileText className='h-5 w-5 text-red-500' />,
-      doc: <FileText className='h-5 w-5 text-blue-500' />,
-      docx: <FileText className='h-5 w-5 text-blue-500' />,
-      txt: <FileText className='h-5 w-5 text-gray-500' />,
-      xlsx: <FileSpreadsheet className='h-5 w-5 text-green-600' />,
-      xls: <FileSpreadsheet className='h-5 w-5 text-green-600' />,
-      csv: <FileSpreadsheet className='h-5 w-5 text-green-600' />,
-    };
-
-    return iconMap[extension] || <File className='h-5 w-5 text-gray-500' />;
-  };
-
   return (
     <Card className='pb-8'>
       <CardHeader>
@@ -233,67 +211,15 @@ const ImagesGalery = () => {
       </CardHeader>
       <CardContent className='pb-0'>
         <div className='flex flex-col gap-8'>
-          <div className='flex gap-6'>
+          <div className='grid grid-cols-2 gap-6'>
             <ImagesContainer
               key={containerKey} // Forzar re-montaje
               images={unifiedImages}
               removeImage={removeFile}
             />
 
-            <div className='w-1/2'>
-              <h3 className='mb-4 text-lg font-bold'>Documentos</h3>
-              {unifiedDocuments.length > 0 ? (
-                <div className='space-y-2'>
-                  {unifiedDocuments.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className='flex items-center justify-between rounded-lg border bg-white p-3'
-                    >
-                      <div className='flex min-w-0 flex-1 items-center space-x-3'>
-                        {getFileIcon(doc.fileExtension)}
-                        <div className='min-w-0 flex-1'>
-                          <p className='truncate text-sm font-medium'>{doc.name}</p>
-                          <p className='text-xs text-gray-500'>
-                            {doc.type === 'file'
-                              ? `${(doc.size / 1024 / 1024).toFixed(2)} MB •`
-                              : ''}
-                            {doc.fileExtension.toUpperCase()}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className='flex items-center space-x-2'>
-                        {/* Link de descarga para URLs */}
-                        {doc.type === 'url' && (
-                          <a
-                            href={doc.url}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className='rounded-full bg-blue-500 p-1 text-white opacity-80 transition-colors hover:bg-blue-600'
-                            aria-label='Ver documento'
-                          >
-                            <ExternalLink className='h-4 w-4' />
-                          </a>
-                        )}
-
-                        {/* Botón eliminar */}
-                        <button
-                          type='button'
-                          onClick={() => removeFile(doc.id)}
-                          className='rounded-full bg-red-500 p-1 text-white opacity-80 transition-colors hover:bg-red-600'
-                          aria-label='Eliminar documento'
-                        >
-                          <X className='h-4 w-4' />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className='flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50'>
-                  <p className='text-sm text-gray-500'>No hay documentos agregados</p>
-                </div>
-              )}
+            <div className=''>
+              <DocumentsContainer documents={unifiedDocuments} removeFile={removeFile} />
             </div>
           </div>
           <div className='min-h-[320px]'>
@@ -313,4 +239,4 @@ const ImagesGalery = () => {
   );
 };
 
-export { ImagesGalery };
+export { DocumentsGallery };

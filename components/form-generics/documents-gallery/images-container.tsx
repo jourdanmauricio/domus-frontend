@@ -2,7 +2,7 @@ import { useKeenSlider } from 'keen-slider/react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
-import { UnifiedImageItem } from './images-gallery';
+import { UnifiedImageItem } from './documents-gallery';
 
 type ImagesContainerProps = {
   images: UnifiedImageItem[];

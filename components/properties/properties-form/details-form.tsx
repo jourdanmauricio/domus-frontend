@@ -23,6 +23,7 @@ const DetailsInfo = () => {
               label='Metros cuadrados cubiertos'
               placeholder='Metros cuadrados cubiertos'
               regExp={/^(0|(0,\d{0,2})|([1-9]\d{0,5})(,\d{0,2})?)?$/}
+              required
             />
 
             <InputNumberField
@@ -30,6 +31,7 @@ const DetailsInfo = () => {
               label='Metros cuadrados descubiertos'
               placeholder='Metros cuadrados descubiertos'
               regExp={/^(0|(0,\d{0,2})|([1-9]\d{0,5})(,\d{0,2})?)?$/}
+              required
             />
 
             <InputNumberField
@@ -37,6 +39,7 @@ const DetailsInfo = () => {
               label='Cantidad de habitaciones'
               placeholder='Cantidad de habitaciones'
               integerDigits={3}
+              required
             />
 
             <InputNumberField
@@ -44,6 +47,7 @@ const DetailsInfo = () => {
               label='Cantidad de baños'
               placeholder='Cantidad de baños'
               integerDigits={3}
+              required
             />
 
             <InputNumberField

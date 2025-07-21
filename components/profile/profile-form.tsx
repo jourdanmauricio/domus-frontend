@@ -55,12 +55,7 @@ export function ProfileForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit, (errors) => {
-      
-        })}
-        className='mt-6 space-y-6'
-      >
+      <form onSubmit={form.handleSubmit(handleSubmit, (errors) => {})} className='mt-6 space-y-6'>
         <FormProvider form={form}>
           <ProfileTabs disabled={disabled} />
         </FormProvider>

@@ -35,7 +35,9 @@ export function DashboardSidebar({ userRoles, isOpen = false, onClose }: Dashboa
           <div className='space-y-2'>
             {menu.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href;
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/dashboard/admin' && pathname.startsWith(item.href + '/'));
 
               return (
                 <Link key={item.href} href={item.href}>

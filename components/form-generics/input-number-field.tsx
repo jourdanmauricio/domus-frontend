@@ -87,7 +87,7 @@ export function InputNumberField({
       render={({ field }) => (
         <FormItem className={className}>
           <FormLabel className={cn('text-sm font-medium text-gray-700', labelClassName)}>
-            {label}
+            {label} {props.required && <span>*</span>}
           </FormLabel>
           {enableClean && field.value && (
             <div className='relative w-full'>

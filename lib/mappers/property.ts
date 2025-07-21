@@ -1,4 +1,62 @@
+import { OwnerIntentionEnum, PropertyTypeEnum } from '@/lib/constants/list';
 import { PropertyBackendDto } from '../types/properties';
+
+export const propertyDefaultValues = {
+  functionalUnit: '',
+  name: '',
+  description: '',
+  propertyType: PropertyTypeEnum.PH,
+  ownerIntention: OwnerIntentionEnum.RENT,
+  ownerName: '',
+  ownerPhone: '',
+  ownerCBU: '',
+  ownerAlias: '',
+  registryNumber: '',
+  commercialStatus: 'Disponible',
+  propertyCondition: '',
+  thumbnail: undefined,
+  images: [],
+  documents: [],
+  coveredMeters: '',
+  uncoveredMeters: '',
+  rooms: '',
+  bathrooms: '1',
+  yearOfConstruction: '',
+  electricityIdentifier: '',
+  gasIdentifier: '',
+  ABLIdentifier: '',
+  administration: '',
+  administrationPhone: '',
+  administrationEmail: '',
+  administrationAddress: '',
+  hasExpenses: false,
+  hasExtraordinaryExpenses: false,
+  hasKitchen: false,
+  hasPatio: false,
+  hasPool: false,
+  hasParking: false,
+  address: {
+    city: {
+      id: '',
+      name: '',
+      province: {
+        id: '06',
+        name: 'Buenos Aires',
+      },
+      latitude: '',
+      longitude: '',
+    },
+    street: '',
+    number: '',
+    apartment: '',
+    neighborhood: '',
+    searchCity: '',
+    postalCode: '',
+    nomenclator: '',
+    latitude: '',
+    longitude: '',
+  },
+};
 
 export const propertyMapperFront = (property: PropertyBackendDto) => {
   return {
@@ -63,7 +121,7 @@ export const propertyMapperFront = (property: PropertyBackendDto) => {
       nomenclator: property.address.nomenclator ? property.address.nomenclator : '',
       latitude: property.address.latitude ? property.address.latitude : '',
       longitude: property.address.longitude ? property.address.longitude : '',
-      postalCode: property.address.postalCode || '',    
+      postalCode: property.address.postalCode || '',
     },
   };
 };

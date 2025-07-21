@@ -23,7 +23,7 @@ export const addressSchema = z
     latitude: z.string().optional(),
     longitude: z.string().optional(),
     nomenclator: z.string().optional(),
-    postalCode: z.string().optional()
+    postalCode: z.string().optional(),
   })
   .superRefine((address, ctx) => {
     const street = address.street?.trim();
@@ -67,6 +67,13 @@ export const addressSchema = z
         code: z.ZodIssueCode.custom,
         message: 'La ciudad es obligatoria',
         path: ['city', 'id'],
+      });
+    }
+    if (!address.nomenclator) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Debes confirmar la dirección',
+        path: ['nomenclator'],
       });
     }
   });

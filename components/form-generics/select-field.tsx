@@ -29,6 +29,7 @@ type BaseSelectFieldProps<T = any> = {
   description?: string;
   apiUrl?: string;
   dataMapper?: (item: T) => SelectOption & Record<string, any>;
+  required?: boolean;
 };
 
 type SelectFieldProps<T = any> = BaseSelectFieldProps<T> & {
@@ -53,6 +54,7 @@ const SelectFieldComponent = forwardRef<HTMLButtonElement, SelectFieldProps>(
       dataMapper,
       value,
       onChange,
+      required,
       ...props
     },
     ref
@@ -93,7 +95,7 @@ const SelectFieldComponent = forwardRef<HTMLButtonElement, SelectFieldProps>(
     return (
       <FormItem className={className}>
         <FormLabel className={cn('text-sm font-medium text-gray-700', labelClassName)}>
-          {label}
+          {label} {required && <span>*</span>}
         </FormLabel>
         <FormControl>
           {apiUrl ? (

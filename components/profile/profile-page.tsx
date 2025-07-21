@@ -1,68 +1,29 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Edit, X } from 'lucide-react';
 
-import { QUERY_KEYS } from '@/lib/constants';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ProfileForm } from './profile-form';
+import { UserSendProfileDto } from '@/lib/types/users';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ProfileForm } from './profile-form';
 import { BasicInfo } from '@/components/profile/basic-info';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { usersService } from '@/lib/services/users.service';
-import { UserSendProfileDto } from '@/lib/types/users';
-import { toast } from '@/hooks/use-toast';
-import { mapAxiosError } from '@/lib/utils/error-mapper';
-import { BackendResponse } from '@/app/api/utils/backend-client';
-import { useApiError } from '@/hooks/useApiError';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { useGetProfile, useUpdateProfile, useUploadAvatar } from '@/hooks/useUsers';
 
 export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedAvatarFile, setSelectedAvatarFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const queryClient = useQueryClient();
-  const { handleError } = useApiError();
 
-  const { data: userProfile, isLoading } = useQuery({
-    queryKey: [QUERY_KEYS.USERS.ME],
-    queryFn: () => usersService.getProfile(),
-  });
+  const { data: userProfile, isLoading } = useGetProfile();
 
-  // Mutation para actualizar perfil
-  const updateProfileMutation = useMutation({
-    mutationFn: (data: UserSendProfileDto) => usersService.updateProfile(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS.ME] });
-      toast({
-        title: 'Perfil actualizado correctamente',
-        variant: 'success',
-      });
-    },
-    onError: (error: any) => {
-      handleError(error, 'actualizar el perfil');
-    },
-  });
-
-  // Mutation para subir avatar
-  const uploadAvatarMutation = useMutation({
-    mutationFn: (file: File) => usersService.uploadAvatar(file),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS.ME] });
-      toast({
-        title: 'Avatar actualizado correctamente',
-        variant: 'success',
-      });
-    },
-    onError: (error: any) => {
-      handleError(error, 'actualizar el avatar');
-    },
-  });
+  const updateProfileMutation = useUpdateProfile();
+  const uploadAvatarMutation = useUploadAvatar();
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
     if (!isEditing) {
-      // Limpiar estado al entrar en modo edición
       setSelectedAvatarFile(null);
       setPreviewImage(null);
     }
@@ -70,22 +31,18 @@ export function ProfilePage() {
 
   const handleAvatarSelect = (file: File) => {
     setSelectedAvatarFile(file);
-    // Crear URL para previsualización
     const imageUrl = URL.createObjectURL(file);
     setPreviewImage(imageUrl);
   };
 
   const handleFormSubmit = async (formData: UserSendProfileDto) => {
     try {
-      // 1. Actualizar perfil
       await updateProfileMutation.mutateAsync(formData);
 
-      // 2. Si hay avatar seleccionado, subirlo
       if (selectedAvatarFile) {
         await uploadAvatarMutation.mutateAsync(selectedAvatarFile);
       }
 
-      // 3. Limpiar estado y salir del modo edición
       setSelectedAvatarFile(null);
       setPreviewImage(null);
       setIsEditing(false);
@@ -94,7 +51,6 @@ export function ProfilePage() {
     }
   };
 
-  // Limpiar la URL de previsualización cuando el componente se desmonte
   useEffect(() => {
     return () => {
       if (previewImage) {

@@ -23,21 +23,23 @@ const BasicInfo = () => {
           <div className='grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2'>
             <InputField
               name='registryNumber'
-              label='Número de Registro'
+              label='Número de Registro (Partida)'
               placeholder='Número de Registro'
+              required
             />
             <InputField
               name='functionalUnit'
               label='Unidad Funcional'
               placeholder='Unidad Funcional'
             />
-            <InputField name='name' label='Nombre' placeholder='Nombre' />
+            <InputField name='name' label='Nombre' placeholder='Nombre' required />
 
             <SelectField
               name='propertyType'
               label='Tipo de Propiedad'
               placeholder='Tipo de Propiedad'
               options={[...PROPERTY_TYPE_LIST]}
+              required
             />
 
             <SelectField
@@ -45,6 +47,7 @@ const BasicInfo = () => {
               label='Intención del Propietario'
               placeholder='Intención del Propietario'
               options={[...OWNER_INTENTION_LIST]}
+              required
             />
 
             <SelectField
@@ -52,6 +55,7 @@ const BasicInfo = () => {
               label='Condición de la Propiedad'
               placeholder='Condición de la Propiedad'
               options={[...PROPERTY_CONDITION_LIST]}
+              required
             />
             <InputField
               name='commercialStatus'

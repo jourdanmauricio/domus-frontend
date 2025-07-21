@@ -37,6 +37,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
             placeholder='Selecciona una provincia'
             disabled={disabled}
             apiUrl={API_ENDPOINTS.PROVINCES}
+            required
           />
 
           <div className='flex w-full items-center gap-2'>
@@ -64,6 +65,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
                 form.setValue('address.city.latitude', value?.latitude);
                 form.setValue('address.city.longitude', value?.longitude);
               }}
+              required
             />
             <Button
               variant='ghost'
@@ -81,6 +83,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
             label='Código Postal'
             placeholder='Código Postal'
             disabled={disabled}
+            required
           />
 
           <InputField
@@ -90,7 +93,13 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
             disabled={disabled}
           />
 
-          <InputField name='address.street' label='Calle' placeholder='Calle' disabled={disabled} />
+          <InputField
+            name='address.street'
+            label='Calle'
+            placeholder='Calle'
+            disabled={disabled}
+            required
+          />
 
           <div className='flex w-full items-center gap-2'>
             <InputField
@@ -99,6 +108,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
               label='Número'
               placeholder='Número'
               disabled={disabled}
+              required
             />
 
             <TooltipProvider>
@@ -163,6 +173,7 @@ const AddressSelector = ({ disabled }: AddressSelectorProps) => {
             label='Nomenclatura'
             placeholder='Nomenclatura'
             disabled
+            required
           />
         </div>
       </CardContent>

@@ -1,27 +1,18 @@
 'use client';
 
+import { Plus, Search } from 'lucide-react';
+import { useCallback, useMemo } from 'react';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { QUERY_KEYS } from '@/lib/constants';
-import { UsersDataTable } from './users-data-table/users-table';
-import { useCallback, useMemo } from 'react';
+import { DataTable } from '@/components/form-generics/tables/data-table';
 import { UserBackendDto } from '@/lib/types/users';
+import { useGetUsers } from '@/hooks/useUsers';
 import { getUsersColumns } from './users-data-table/columns';
-import { useQuery } from '@tanstack/react-query';
-import { usersService } from '@/lib/services/users.service';
 
 export default function UsersPage() {
-  // Fetch users from the API
-  const {
-    data: usersData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: [QUERY_KEYS.USERS.ME],
-    queryFn: () => usersService.getUsers(),
-  });
+  const { data: usersData, isLoading, error } = useGetUsers();
 
   const onDownload = useCallback(async (row: UserBackendDto) => {
     // TODO: Implementar descarga
@@ -74,7 +65,7 @@ export default function UsersPage() {
           </div>
         </CardHeader>
         <CardContent className='flex-1 overflow-x-auto p-4'>
-          <UsersDataTable
+          <DataTable
             columns={columns}
             data={usersData || []}
             isLoading={isLoading}
