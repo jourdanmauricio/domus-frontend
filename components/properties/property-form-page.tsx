@@ -108,7 +108,6 @@ const PropertyFormPage = ({ id }: PropertyFormPageProps) => {
   }, [data, form]);
 
   const onSubmit = (data: z.infer<typeof propertyFormSchema>) => {
-
     if (id === 'new') {
       createPropertyMutation.mutate(data);
     } else {
@@ -120,22 +119,22 @@ const PropertyFormPage = ({ id }: PropertyFormPageProps) => {
     router.push('/dashboard/admin/properties');
   };
 
+  console.log('errors', form.formState.errors);
+  console.log('form', form.getValues());
+
   return (
     <RoleGuard allowedRoles={['admin']}>
       <div className='space-y-6'>
         <div>
           <h2 className='page-title'>{id === 'new' ? 'Nueva Propiedad' : 'Editar Propiedad'}</h2>
-          <p className='page-description'>{id === 'new' ? 'Crea la nueva propiedad' : 'Edita la propiedad'}</p>
+          <p className='page-description'>
+            {id === 'new' ? 'Crea la nueva propiedad' : 'Edita la propiedad'}
+          </p>
         </div>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit, (errors) => {
-        
-          })}
-          className='space-y-8'
-        >
+        <form onSubmit={form.handleSubmit(onSubmit, (errors) => {})} className='space-y-8'>
           <FormProvider form={form}>
             <BasicInfo />
             <AddressInfo disabled={false} />
