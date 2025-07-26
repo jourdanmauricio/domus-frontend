@@ -227,7 +227,7 @@ const DocumentsGallery = () => {
               className='w-full'
               files={files}
               onFilesChange={handleFilesChange}
-              maxFiles={10}
+              maxFiles={50}
               maxSize={5}
               accept='image/*,.pdf,.doc,.docx,.txt,.xlsx,.xls,.csv'
               fileType='mixed'

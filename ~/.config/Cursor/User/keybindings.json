@@ -1,0 +1,27 @@
+// Place your key bindings in this file to override the defaults
+[
+  {
+    "key": "ctrl+i",
+    "command": "composerMode.agent"
+  },
+  {
+    "key": "ctrl+k ctrl+c",
+    "command": "editor.action.commentLine",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+m ctrl+alt+c",
+    "command": "-workbench.action.addComment",
+    "when": "activeCursorHasCommentingRange"
+  },
+  {
+    "key": "ctrl+k ctrl+u",
+    "command": "editor.action.uncommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+m ctrl+u",
+    "command": "-editor.action.removeCommentLine",
+    "when": "editorTextFocus && !editorReadonly"
+  }
+]

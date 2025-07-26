@@ -12,6 +12,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Domus App',
   description: 'Aplicación con NextAuth y TanStack Query',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

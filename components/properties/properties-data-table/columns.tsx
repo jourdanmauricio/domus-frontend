@@ -20,18 +20,18 @@ export const getColumns = ({
   {
     accessorKey: 'name',
     header: 'Nombre',
-    cell: ({ row }) => row.getValue('name') || '-',
-    minSize: 60,
-    size: 120,
+    cell: ({ row }) => <span className='mr-auto'>{row.getValue('name') || '-'}</span>,
+    // minSize: 90,
+    size: 130,
   },
   {
     id: 'address.nomenclator',
     accessorFn: (row) => row.address.nomenclator,
     header: 'Dirección',
     cell: ({ row }) => (
-      <span className='mr-auto'>{row.getValue('address.nomenclator') || '-'}</span>
+      <TruncatedCell value={row.getValue('address.nomenclator') || '-'}></TruncatedCell>
     ),
-    minSize: 300,
+    minSize: 350,
     size: 0,
   },
   {
@@ -45,21 +45,14 @@ export const getColumns = ({
     accessorKey: 'ownerPhone',
     header: 'Teléfono',
     cell: ({ row }) => row.getValue('ownerPhone') || '-',
-    minSize: 120,
+    minSize: 100,
     size: 0,
   },
   {
     accessorKey: 'administration',
     header: 'Administración',
-    cell: ({ row }) => row.getValue('administration') || '-',
+    cell: ({ row }) => (row.getValue('administration') ? 'Si' : 'No'),
     minSize: 200,
-    size: 0,
-  },
-  {
-    accessorKey: 'administrationPhone',
-    header: 'Teléfono',
-    cell: ({ row }) => row.getValue('administrationPhone') || '-',
-    minSize: 120,
     size: 0,
   },
   {

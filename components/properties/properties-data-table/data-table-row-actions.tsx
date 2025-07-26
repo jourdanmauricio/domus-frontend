@@ -1,5 +1,5 @@
 import { Row } from '@tanstack/react-table';
-import { Pencil, Trash2, Download } from 'lucide-react';
+import { Pencil, Trash2, Eye } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
@@ -26,7 +26,7 @@ const DataTableRowActions = <TData,>({
           onDownload(row.original);
         }}
       >
-        <Download className='h-5 w-5' />
+        <Eye className='h-5 w-5' />
       </Button>
 
       <Button

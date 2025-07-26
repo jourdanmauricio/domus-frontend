@@ -19,6 +19,7 @@ export const useCreateProperty = () => {
         description: 'La propiedad ha sido registrada en el sistema',
         variant: 'default',
       });
+      router.push(`/dashboard/admin/properties`);
     },
     onError: (error: any) => {
       const { message, details } = mapAxiosError(error);
@@ -31,7 +32,6 @@ export const useCreateProperty = () => {
         description: description,
         variant: 'destructive',
       });
-      router.push(`/dashboard/admin/properties`);
     },
   });
 };

@@ -17,15 +17,17 @@ export interface CreatePropertyResponse {
 
 // Función helper para verificar si algo es un archivo de manera segura
 const isFile = (item: any): boolean => {
-  return typeof window !== 'undefined' && 
-         item && 
-         typeof item === 'object' && 
-         'name' in item && 
-         'size' in item && 
-         'type' in item &&
-         typeof item.name === 'string' &&
-         typeof item.size === 'number' &&
-         typeof item.type === 'string';
+  return (
+    typeof window !== 'undefined' &&
+    item &&
+    typeof item === 'object' &&
+    'name' in item &&
+    'size' in item &&
+    'type' in item &&
+    typeof item.name === 'string' &&
+    typeof item.size === 'number' &&
+    typeof item.type === 'string'
+  );
 };
 
 // Función para limpiar datos antes de enviar al backend
@@ -42,18 +44,24 @@ const cleanDataForBackend = (data: CreatePropertyData) => {
 
   // Limpiar arrays de imágenes y documentos
   if (cleaned.images && Array.isArray(cleaned.images)) {
-    cleaned.images = cleaned.images.filter(item => 
-      item !== null && item !== undefined && item !== '' && 
-      (typeof item === 'string' || isFile(item)) &&
-      !(typeof item === 'object' && Object.keys(item).length === 0)
+    cleaned.images = cleaned.images.filter(
+      (item) =>
+        item !== null &&
+        item !== undefined &&
+        item !== '' &&
+        (typeof item === 'string' || isFile(item)) &&
+        !(typeof item === 'object' && Object.keys(item).length === 0)
     );
   }
 
   if (cleaned.documents && Array.isArray(cleaned.documents)) {
-    cleaned.documents = cleaned.documents.filter(item => 
-      item !== null && item !== undefined && item !== '' && 
-      (typeof item === 'string' || isFile(item)) &&
-      !(typeof item === 'object' && Object.keys(item).length === 0)
+    cleaned.documents = cleaned.documents.filter(
+      (item) =>
+        item !== null &&
+        item !== undefined &&
+        item !== '' &&
+        (typeof item === 'string' || isFile(item)) &&
+        !(typeof item === 'object' && Object.keys(item).length === 0)
     );
   }
 
@@ -122,7 +130,7 @@ const separateFilesFromUrls = (data: CreatePropertyData) => {
     const imageFiles: File[] = [];
     const imageUrls: string[] = [];
 
-    data.images.forEach(item => {
+    data.images.forEach((item) => {
       if (isFile(item)) {
         imageFiles.push(item as File);
       } else if (typeof item === 'string' && item.trim() !== '') {
@@ -139,7 +147,7 @@ const separateFilesFromUrls = (data: CreatePropertyData) => {
     const documentFiles: File[] = [];
     const documentUrls: string[] = [];
 
-    data.documents.forEach(item => {
+    data.documents.forEach((item) => {
       if (isFile(item)) {
         documentFiles.push(item as File);
       } else if (typeof item === 'string' && item.trim() !== '') {
@@ -161,13 +169,11 @@ const propertiesService = {
 
     // Verificar si hay archivos físicos para enviar
     const hasPhysicalFiles =
-      files.thumbnail ||
-      files.images.length > 0 ||
-      files.documents.length > 0;
+      files.thumbnail || files.images.length > 0 || files.documents.length > 0;
 
     if (hasPhysicalFiles) {
       const formData = new FormData();
-      
+
       // Agregar thumbnail si existe
       if (files.thumbnail) {
         formData.append('thumbnail', files.thumbnail);
@@ -203,13 +209,11 @@ const propertiesService = {
 
     // Verificar si hay archivos físicos para enviar
     const hasPhysicalFiles =
-      files.thumbnail ||
-      files.images.length > 0 ||
-      files.documents.length > 0;
+      files.thumbnail || files.images.length > 0 || files.documents.length > 0;
 
     if (hasPhysicalFiles) {
       const formData = new FormData();
-      
+
       // Agregar thumbnail si existe
       if (files.thumbnail) {
         formData.append('thumbnail', files.thumbnail);
@@ -234,7 +238,9 @@ const propertiesService = {
       return response.data;
     } else {
       // Si no hay archivos físicos, enviar solo JSON
-      const response = await axiosInstance.put(`${API_ENDPOINTS.PROPERTIES}/${id}`, { data: cleanedData });
+      const response = await axiosInstance.put(`${API_ENDPOINTS.PROPERTIES}/${id}`, {
+        data: cleanedData,
+      });
       return response.data;
     }
   },
@@ -247,6 +253,10 @@ const propertiesService = {
   async getPropertyById(id: string): Promise<PropertyBackendDto> {
     const response = await axiosInstance.get(`${API_ENDPOINTS.PROPERTIES}/${id}`);
     return response.data;
+  },
+
+  async deleteProperty(id: string): Promise<void> {
+    await axiosInstance.delete(`${API_ENDPOINTS.PROPERTIES}/${id}`);
   },
 };
 
